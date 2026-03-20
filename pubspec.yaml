@@ -1,0 +1,35 @@
+name: coltrade
+description: ColTrade - Plataforma integral de comercio exterior para Colombia
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.1.0
+  fl_chart: ^0.66.0
+  percent_indicator: ^4.2.3
+  cached_network_image: ^3.3.1
+  flutter_svg: ^2.0.9
+  shimmer: ^3.0.0
+  smooth_page_indicator: ^1.1.0
+  intl: ^0.19.0
+  flutter_animate: ^4.5.0
+  lottie: ^3.0.0
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+  get_it: ^7.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
