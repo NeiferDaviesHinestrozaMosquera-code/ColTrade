@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../theme/app_theme.dart';
-import '../../../../widgets/common_widgets.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/checklist_bloc.dart';
 import '../../domain/entities/doc_item_entity.dart';
 
@@ -51,20 +51,9 @@ class _ChecklistViewState extends State<_ChecklistView>
         final loaded = state is ChecklistLoaded ? state : null;
         return Scaffold(
           backgroundColor: AppColors.primaryDarkNavy,
-          appBar: AppBar(
-            backgroundColor: AppColors.primaryDarkNavy,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                  size: 18, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Text('Checklist Inteligente',
-                style: GoogleFonts.inter(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white)),
+          appBar: ColTradeAppBar(
+            dark: true,
+            title: 'Checklist Inteligente',
             actions: [
               IconButton(
                 icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
@@ -107,12 +96,14 @@ class _ChecklistViewState extends State<_ChecklistView>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('COLTRADE AI',
-              style:
-                  AppTextStyles.labelUppercase.copyWith(color: const Color(0xFF94A3B8))),
+              style: AppTextStyles.labelUppercase
+                  .copyWith(color: const Color(0xFF94A3B8))),
           const SizedBox(height: 4),
           Text('Exportación de Aguacate Hass',
               style: GoogleFonts.inter(
-                  fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
           const SizedBox(height: 6),
           Row(
             children: [
@@ -267,8 +258,7 @@ class _ChecklistViewState extends State<_ChecklistView>
 
   Widget _buildDocRow(DocItemEntity doc, int index) {
     return GestureDetector(
-      onTap: () =>
-          context.read<ChecklistBloc>().add(ToggleDocument(index)),
+      onTap: () => context.read<ChecklistBloc>().add(ToggleDocument(index)),
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(14),
@@ -283,7 +273,8 @@ class _ChecklistViewState extends State<_ChecklistView>
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: doc.completed ? AppColors.successGreen : Colors.transparent,
+                color:
+                    doc.completed ? AppColors.successGreen : Colors.transparent,
                 border: doc.completed
                     ? null
                     : Border.all(
@@ -306,8 +297,8 @@ class _ChecklistViewState extends State<_ChecklistView>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(doc.name,
-                      style: AppTextStyles.bodyRegular.copyWith(
-                          fontWeight: FontWeight.w600, fontSize: 14)),
+                      style: AppTextStyles.bodyRegular
+                          .copyWith(fontWeight: FontWeight.w600, fontSize: 14)),
                   Text('ENTIDAD: ${doc.entity}',
                       style:
                           AppTextStyles.labelUppercase.copyWith(fontSize: 10)),
@@ -337,12 +328,24 @@ class _ChecklistViewState extends State<_ChecklistView>
 
   Widget _buildOrderTab() {
     final steps = [
-      (TimelineStatus.completed, 'Solicitud creada', 'Inicio del proceso',
-          '12 Oct, 09:00'),
-      (TimelineStatus.completed, 'Documentos DIAN listos',
-          'Factura y lista de empaque aprobados', '14 Oct, 11:30'),
-      (TimelineStatus.active, 'Obtener Certificado ICA',
-          'Pendiente de inspección fitosanitaria', null),
+      (
+        TimelineStatus.completed,
+        'Solicitud creada',
+        'Inicio del proceso',
+        '12 Oct, 09:00'
+      ),
+      (
+        TimelineStatus.completed,
+        'Documentos DIAN listos',
+        'Factura y lista de empaque aprobados',
+        '14 Oct, 11:30'
+      ),
+      (
+        TimelineStatus.active,
+        'Obtener Certificado ICA',
+        'Pendiente de inspección fitosanitaria',
+        null
+      ),
       (TimelineStatus.pending, 'Declaración de Exportación', null, null),
       (TimelineStatus.pending, 'Embarque y BL', null, null),
     ];
@@ -364,16 +367,41 @@ class _ChecklistViewState extends State<_ChecklistView>
 
   Widget _buildEntitiesTab() {
     final entities = [
-      ('DIAN', 'Dirección de Impuestos y Aduanas Nacionales',
-          Icons.account_balance_rounded, AppColors.primaryDarkNavy, true),
-      ('ICA', 'Instituto Colombiano Agropecuario', Icons.eco_rounded,
-          AppColors.successGreen, false),
-      ('INVIMA', 'Instituto Nacional de Vigilancia',
-          Icons.health_and_safety_outlined, AppColors.infoBlue, false),
-      ('MinCIT', 'Ministerio de Comercio, Industria y Turismo',
-          Icons.business_center_outlined, AppColors.accentOrange, false),
-      ('VUCE', 'Ventanilla Única de Comercio Exterior',
-          Icons.computer_outlined, Colors.teal, false),
+      (
+        'DIAN',
+        'Dirección de Impuestos y Aduanas Nacionales',
+        Icons.account_balance_rounded,
+        AppColors.primaryDarkNavy,
+        true
+      ),
+      (
+        'ICA',
+        'Instituto Colombiano Agropecuario',
+        Icons.eco_rounded,
+        AppColors.successGreen,
+        false
+      ),
+      (
+        'INVIMA',
+        'Instituto Nacional de Vigilancia',
+        Icons.health_and_safety_outlined,
+        AppColors.infoBlue,
+        false
+      ),
+      (
+        'MinCIT',
+        'Ministerio de Comercio, Industria y Turismo',
+        Icons.business_center_outlined,
+        AppColors.accentOrange,
+        false
+      ),
+      (
+        'VUCE',
+        'Ventanilla Única de Comercio Exterior',
+        Icons.computer_outlined,
+        Colors.teal,
+        false
+      ),
     ];
 
     return ListView(

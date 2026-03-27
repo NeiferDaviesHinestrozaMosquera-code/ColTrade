@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../theme/app_theme.dart';
-import '../../../../widgets/common_widgets.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common_widgets.dart';
 import '../../domain/entities/alert_entity.dart';
 import '../bloc/alerts_bloc.dart';
 import '../bloc/alerts_event.dart';
 import '../bloc/alerts_state.dart';
-import '../../../../screens/alert_detail_screen.dart';
+import 'alert_detail_screen.dart';
 import '../../../../injection/injection.dart';
 
 class AlertsScreen extends StatelessWidget {
@@ -21,25 +21,25 @@ class AlertsScreen extends StatelessWidget {
       create: (_) => AlertsBloc(getAlerts: sl())..add(const LoadAlerts()),
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: AppColors.primaryDarkNavy,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Alertas Regulatorias',
-                style: GoogleFonts.inter(
-                    fontSize: 17, fontWeight: FontWeight.w600, color: Colors.white)),
-            Text('COLTRADE INTELLIGENCE',
-                style: AppTextStyles.labelUppercase
-                    .copyWith(color: const Color(0xFF94A3B8), fontSize: 9)),
-          ]),
-          leading: Navigator.canPop(context)
-              ? IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-                  onPressed: () => Navigator.pop(context))
-              : null,
+        appBar: ColTradeAppBar(
+          dark: true,
+          titleWidget: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Alertas Regulatorias',
+                  style: GoogleFonts.inter(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white)),
+              Text('COLTRADE INTELLIGENCE',
+                  style: AppTextStyles.labelUppercase
+                      .copyWith(color: const Color(0xFF94A3B8), fontSize: 9)),
+            ],
+          ),
           actions: [
-            IconButton(icon: const NotificationBell(hasNotification: true), onPressed: () {})
+            IconButton(
+                icon: const NotificationBell(hasNotification: true),
+                onPressed: () {})
           ],
         ),
         body: BlocBuilder<AlertsBloc, AlertsState>(
@@ -50,15 +50,18 @@ class AlertsScreen extends StatelessWidget {
                 color: AppColors.primaryDarkNavy,
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                 child: TextFormField(
-                  style: AppTextStyles.bodyRegular.copyWith(color: Colors.white),
+                  style:
+                      AppTextStyles.bodyRegular.copyWith(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Buscar alertas, decretos, normas...',
-                    hintStyle: AppTextStyles.bodySmall.copyWith(color: Colors.white38),
-                    prefixIcon: const Icon(Icons.search_rounded, color: Colors.white38),
+                    hintStyle:
+                        AppTextStyles.bodySmall.copyWith(color: Colors.white38),
+                    prefixIcon:
+                        const Icon(Icons.search_rounded, color: Colors.white38),
                     filled: true,
                     fillColor: const Color(0xFF1E3A5F),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -69,7 +72,8 @@ class AlertsScreen extends StatelessWidget {
               // Filters
               Container(
                 color: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -78,7 +82,8 @@ class AlertsScreen extends StatelessWidget {
                           ? state.activeFilter == f
                           : f == 'Todas';
                       return GestureDetector(
-                        onTap: () => ctx.read<AlertsBloc>().add(FilterAlerts(f)),
+                        onTap: () =>
+                            ctx.read<AlertsBloc>().add(FilterAlerts(f)),
                         child: Container(
                           margin: const EdgeInsets.only(right: 8),
                           padding: const EdgeInsets.symmetric(
@@ -159,12 +164,13 @@ class _AlertCard extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(14),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration:
-                    BoxDecoration(color: badgeColor, borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(
+                    color: badgeColor, borderRadius: BorderRadius.circular(20)),
                 child: Text(label,
                     style: AppTextStyles.badgeText
                         .copyWith(fontSize: 9, color: Colors.white)),
@@ -198,13 +204,15 @@ class _AlertCard extends StatelessWidget {
               Text(alert.institution, style: AppTextStyles.caption),
               const Spacer(),
               OutlinedButton(
-                onPressed: () => Navigator.push(context,
+                onPressed: () => Navigator.push(
+                    context,
                     MaterialPageRoute(
                         builder: (_) => AlertDetailScreen(alert: alert))),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryDarkNavy,
                   side: const BorderSide(color: AppColors.border),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   shape: RoundedRectangleBorder(

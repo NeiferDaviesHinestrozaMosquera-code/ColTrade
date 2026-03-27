@@ -1,0 +1,50 @@
+﻿Analyzing coltrade...                                           
+
+   info - Use 'const' with the constructor to improve performance - lib\core\widgets\common_widgets.dart:355:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\knowledge_center_screen.dart:102:19 - prefer_const_constructors
+   info - Unnecessary use of 'toList' in a spread - lib\features\academy\presentation\screens\knowledge_center_screen.dart:104:71 - unnecessary_to_list_in_spreads
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\knowledge_center_screen.dart:108:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\knowledge_center_screen.dart:230:25 - prefer_const_constructors
+   info - The private field _currentLesson could be 'final' - lib\features\academy\presentation\screens\lesson_player_screen.dart:16:7 - prefer_final_fields
+   info - Unnecessary use of 'toList' in a spread - lib\features\academy\presentation\screens\lesson_player_screen.dart:76:24 - unnecessary_to_list_in_spreads
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\lesson_player_screen.dart:153:23 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\academy\presentation\screens\lesson_player_screen.dart:154:35 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\lesson_player_screen.dart:169:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\lesson_player_screen.dart:170:26 - prefer_const_constructors
+   info - The private field _currentQuestion could be 'final' - lib\features\academy\presentation\screens\quiz_screen.dart:16:7 - prefer_final_fields
+   info - Unnecessary use of 'toList' in a spread - lib\features\academy\presentation\screens\quiz_screen.dart:127:22 - unnecessary_to_list_in_spreads
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\quiz_screen.dart:201:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\quiz_screen.dart:204:28 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\academy\presentation\screens\quiz_screen.dart:205:33 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\quiz_screen.dart:206:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\academy\presentation\screens\quiz_screen.dart:291:19 - prefer_const_constructors
+   info - Unnecessary use of 'toList' in a spread - lib\features\academy\presentation\screens\quiz_screen.dart:334:22 - unnecessary_to_list_in_spreads
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\agents_screen.dart:193:33 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\import_assistant_screen.dart:101:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\import_assistant_screen.dart:112:29 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\features\assistant\presentation\screens\import_assistant_screen.dart:124:31 - prefer_const_literals_to_create_immutables
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\import_assistant_screen.dart:306:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\import_assistant_screen.dart:307:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\import_assistant_screen.dart:308:29 - prefer_const_constructors
+   info - Statements in an if should be enclosed in a block - lib\features\assistant\presentation\screens\import_assistant_screen.dart:512:17 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\features\assistant\presentation\screens\import_assistant_screen.dart:514:17 - curly_braces_in_flow_control_structures
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\nandina_classifier_screen.dart:272:29 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\nandina_classifier_screen.dart:273:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\nandina_classifier_screen.dart:274:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\assistant\presentation\screens\nandina_classifier_screen.dart:363:25 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\checklist\presentation\screens\checklist_screen.dart:246:9 - prefer_const_constructors
+warning - Unused import: '../../../logistics/presentation/screens/logistics_screen.dart' - lib\features\home\presentation\screens\home_screen.dart:24:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\features\home\presentation\screens\home_screen.dart:235:17 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\logistics\presentation\widgets\alternatives_panel_widget.dart:305:19 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\logistics\presentation\widgets\alternatives_panel_widget.dart:318:28 - prefer_const_constructors
+   info - Statements in an if should be enclosed in a block - lib\features\profile\presentation\screens\company_info_screen.dart:381:25 - curly_braces_in_flow_control_structures
+   info - Use 'const' with the constructor to improve performance - lib\features\profile\presentation\screens\notification_settings_screen.dart:243:11 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\features\profile\presentation\screens\notification_settings_screen.dart:251:11 - prefer_const_constructors
+   info - Statements in an if should be enclosed in a block - lib\features\profile\presentation\screens\personal_info_screen.dart:194:25 - curly_braces_in_flow_control_structures
+   info - Statements in a for should be enclosed in a block - lib\features\security\presentation\screens\otp_verification_screen.dart:66:35 - curly_braces_in_flow_control_structures
+   info - Statements in a for should be enclosed in a block - lib\features\security\presentation\screens\otp_verification_screen.dart:67:34 - curly_braces_in_flow_control_structures
+   info - Statements in a for should be enclosed in a block - lib\features\security\presentation\screens\otp_verification_screen.dart:112:41 - curly_braces_in_flow_control_structures
+   info - Use 'const' with the constructor to improve performance - lib\features\security\presentation\screens\register_screen.dart:356:23 - prefer_const_constructors
+warning - Unused import: 'features/security/presentation/screens/login_screen.dart' - lib\main.dart:4:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\main.dart:54:15 - prefer_const_constructors
+

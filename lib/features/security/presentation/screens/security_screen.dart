@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../theme/app_theme.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/security_bloc.dart';
 import '../../domain/entities/session_entity.dart';
 
@@ -27,21 +28,9 @@ class _SecurityView extends StatelessWidget {
         final bloc = context.read<SecurityBloc>();
         return Scaffold(
           backgroundColor: AppColors.background,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Text(
-              'Seguridad de la Cuenta',
-              style: GoogleFonts.inter(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
-            ),
+          appBar: const ColTradeAppBar(
+            title: 'Seguridad de la Cuenta',
+            dark: true,
           ),
           body: ListView(
             padding: const EdgeInsets.symmetric(vertical: 24),
@@ -95,10 +84,10 @@ class _SecurityView extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('SESIONES ACTIVAS', style: AppTextStyles.labelUppercase),
+                    Text('SESIONES ACTIVAS',
+                        style: AppTextStyles.labelUppercase),
                     GestureDetector(
-                      onTap: () =>
-                          _confirmCloseAllSessions(context, bloc),
+                      onTap: () => _confirmCloseAllSessions(context, bloc),
                       child: Text(
                         'Cerrar todas',
                         style: GoogleFonts.inter(
@@ -200,7 +189,8 @@ class _SecurityView extends StatelessWidget {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryDarkNavy.withValues(alpha: 0.08),
+                        color:
+                            AppColors.primaryDarkNavy.withValues(alpha: 0.08),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.verified_user_rounded,
@@ -250,8 +240,8 @@ class _SecurityView extends StatelessWidget {
         child: Icon(icon, color: AppColors.primaryDarkNavy, size: 20),
       ),
       title: Text(title,
-          style: AppTextStyles.bodyRegular
-              .copyWith(fontWeight: FontWeight.w600)),
+          style:
+              AppTextStyles.bodyRegular.copyWith(fontWeight: FontWeight.w600)),
       subtitle: Text(subtitle, style: AppTextStyles.caption),
       trailing: const Icon(Icons.arrow_forward_ios_rounded,
           size: 14, color: AppColors.textSecondary),
@@ -279,8 +269,7 @@ class _SecurityView extends StatelessWidget {
           if (session.isCurrent) ...[
             const SizedBox(width: 6),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.successGreen,
                 borderRadius: BorderRadius.circular(4),
@@ -317,8 +306,8 @@ class _SecurityView extends StatelessWidget {
         size: 26,
       ),
       title: Text(label,
-          style: AppTextStyles.bodyRegular
-              .copyWith(fontWeight: FontWeight.w600)),
+          style:
+              AppTextStyles.bodyRegular.copyWith(fontWeight: FontWeight.w600)),
       subtitle: Text('$date • $ip', style: AppTextStyles.caption),
     );
   }
@@ -345,8 +334,7 @@ class _SecurityView extends StatelessWidget {
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
               child: Column(
@@ -386,8 +374,7 @@ class _SecurityView extends StatelessWidget {
                     controller: newCtrl,
                     label: 'Nueva contraseña',
                     obscure: obscureNew,
-                    onToggle: () =>
-                        setModal(() => obscureNew = !obscureNew),
+                    onToggle: () => setModal(() => obscureNew = !obscureNew),
                   ),
                   const SizedBox(height: 14),
                   _passwordField(
@@ -405,16 +392,15 @@ class _SecurityView extends StatelessWidget {
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text(
-                                '✅ Contraseña actualizada correctamente'),
+                            content:
+                                Text('✅ Contraseña actualizada correctamente'),
                             backgroundColor: AppColors.successGreen,
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryDarkNavy,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),
@@ -456,9 +442,7 @@ class _SecurityView extends StatelessWidget {
         ),
         suffixIcon: IconButton(
           icon: Icon(
-            obscure
-                ? Icons.visibility_off_outlined
-                : Icons.visibility_outlined,
+            obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
             color: AppColors.textSecondary,
             size: 20,
           ),
@@ -473,20 +457,17 @@ class _SecurityView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text('Cerrar sesión',
             style: GoogleFonts.inter(
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary)),
+                fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
         content: Text('¿Quieres cerrar la sesión en "${session.device}"?',
             style: AppTextStyles.bodySmall),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text('Cancelar',
-                style:
-                    GoogleFonts.inter(color: AppColors.textSecondary)),
+                style: GoogleFonts.inter(color: AppColors.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -517,12 +498,10 @@ class _SecurityView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text('Cerrar todas las sesiones',
             style: GoogleFonts.inter(
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary)),
+                fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
         content: Text(
             'Se cerrarán todas las sesiones activas excepto la actual.',
             style: AppTextStyles.bodySmall),
@@ -530,8 +509,7 @@ class _SecurityView extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text('Cancelar',
-                style:
-                    GoogleFonts.inter(color: AppColors.textSecondary)),
+                style: GoogleFonts.inter(color: AppColors.textSecondary)),
           ),
           ElevatedButton(
             onPressed: () {

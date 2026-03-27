@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../theme/app_theme.dart';
-import '../../../../widgets/common_widgets.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/calculator_bloc.dart';
 
 class CalculatorScreen extends StatelessWidget {
@@ -89,14 +89,14 @@ class _CalculatorViewState extends State<_CalculatorView> {
                       _inputField('Product FOB Value (USD)', _fobCtrl,
                           prefix: '\$',
                           hint: '0.00',
-                          onChanged: (v) => bloc.add(
-                              UpdateFob(double.tryParse(v) ?? 0))),
+                          onChanged: (v) =>
+                              bloc.add(UpdateFob(double.tryParse(v) ?? 0))),
                       const SizedBox(height: 14),
                       _inputField('Insurance (USD)', _insuranceCtrl,
                           prefix: '\$',
                           hint: 'Min. 1% of FOB',
-                          onChanged: (v) => bloc.add(
-                              UpdateInsurance(double.tryParse(v) ?? 0))),
+                          onChanged: (v) => bloc
+                              .add(UpdateInsurance(double.tryParse(v) ?? 0))),
                       const SizedBox(height: 14),
 
                       // Freight toggle
@@ -118,10 +118,10 @@ class _CalculatorViewState extends State<_CalculatorView> {
                             ),
                             child: Row(
                               children: [
-                                _freightOption('✈', 'Air Freight', 'air',
-                                    state, bloc),
-                                _freightOption('🚢', 'Sea Freight', 'sea',
-                                    state, bloc),
+                                _freightOption(
+                                    '✈', 'Air Freight', 'air', state, bloc),
+                                _freightOption(
+                                    '🚢', 'Sea Freight', 'sea', state, bloc),
                               ],
                             ),
                           ),
@@ -141,8 +141,7 @@ class _CalculatorViewState extends State<_CalculatorView> {
                           const SizedBox(height: 8),
                           DropdownButtonFormField<String>(
                             value: state.selectedPort,
-                            decoration:
-                                AppDecorations.inputDecoration('', ''),
+                            decoration: AppDecorations.inputDecoration('', ''),
                             items: [
                               'Buenaventura (SPRB/TCBUEN)',
                               'Cartagena (SPRC)',
@@ -152,22 +151,19 @@ class _CalculatorViewState extends State<_CalculatorView> {
                                 .map((p) => DropdownMenuItem(
                                     value: p,
                                     child: Text(p,
-                                        style: const TextStyle(
-                                            fontSize: 13))))
+                                        style: const TextStyle(fontSize: 13))))
                                 .toList(),
-                            onChanged: (v) =>
-                                bloc.add(UpdatePort(v!)),
+                            onChanged: (v) => bloc.add(UpdatePort(v!)),
                           ),
                         ],
                       ),
                       const SizedBox(height: 14),
 
-                      _inputField(
-                          'Customs Duty (Arancel %)', _dutyCtrl,
+                      _inputField('Customs Duty (Arancel %)', _dutyCtrl,
                           suffix: '%',
                           hint: 'e.g. 5, 10, 15',
-                          onChanged: (v) => bloc.add(
-                              UpdateDutyRate(double.tryParse(v) ?? 0))),
+                          onChanged: (v) => bloc
+                              .add(UpdateDutyRate(double.tryParse(v) ?? 0))),
                     ],
                   ),
                 ),
@@ -202,20 +198,20 @@ class _CalculatorViewState extends State<_CalculatorView> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      _calcRow(
-                          'CIF Value (FOB + Freight + Ins.)',
-                          '\$${state.cif.toStringAsFixed(2)}',
-                          Colors.white),
+                      _calcRow('CIF Value (FOB + Freight + Ins.)',
+                          '\$${state.cif.toStringAsFixed(2)}', Colors.white),
                       _calcRow(
                           'Customs Duty (${state.dutyPercent.toStringAsFixed(0)}%)',
                           '\$${state.duty.toStringAsFixed(2)}',
                           Colors.white70),
                       _calcRow('VAT (IVA 19%)',
                           '\$${state.iva.toStringAsFixed(2)}', Colors.white70),
-                      _calcRow('Customs Agency Fee',
+                      _calcRow(
+                          'Customs Agency Fee',
                           '\$${state.agencyFee.toStringAsFixed(2)}',
                           Colors.white70),
-                      _calcRow('Port/Storage Fees',
+                      _calcRow(
+                          'Port/Storage Fees',
                           '\$${state.portFees.toStringAsFixed(2)}',
                           Colors.white70),
                       const Divider(color: Color(0xFF2D3D60), height: 20),
@@ -240,10 +236,9 @@ class _CalculatorViewState extends State<_CalculatorView> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.accentOrange,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(10)),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12),
+                                    borderRadius: BorderRadius.circular(10)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                               ),
                               icon: const Icon(Icons.save_outlined, size: 16),
                               label: Text('Save Quote',
@@ -255,8 +250,8 @@ class _CalculatorViewState extends State<_CalculatorView> {
                             width: 44,
                             height: 44,
                             decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: const Color(0xFF3D4F6E)),
+                              border:
+                                  Border.all(color: const Color(0xFF3D4F6E)),
                               borderRadius: BorderRadius.circular(22),
                             ),
                             child: const Icon(Icons.share_outlined,
@@ -341,12 +336,12 @@ class _CalculatorViewState extends State<_CalculatorView> {
         children: [
           Expanded(
             child: Text(label,
-                style:
-                    AppTextStyles.bodySmall.copyWith(color: color.withValues(alpha: 0.8))),
+                style: AppTextStyles.bodySmall
+                    .copyWith(color: color.withValues(alpha: 0.8))),
           ),
           Text(value,
-              style: AppTextStyles.bodyRegular.copyWith(
-                  color: color, fontSize: 14)),
+              style: AppTextStyles.bodyRegular
+                  .copyWith(color: color, fontSize: 14)),
         ],
       ),
     );
@@ -392,8 +387,8 @@ class _CalculatorViewState extends State<_CalculatorView> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(
-                  color: AppColors.primaryDarkNavy, width: 2),
+              borderSide:
+                  const BorderSide(color: AppColors.primaryDarkNavy, width: 2),
             ),
           ),
         ),

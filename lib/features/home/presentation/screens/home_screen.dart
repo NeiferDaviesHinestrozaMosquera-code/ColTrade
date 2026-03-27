@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../theme/app_theme.dart';
-import '../../../../widgets/common_widgets.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/common_widgets.dart';
 import '../../../alerts/presentation/screens/alerts_screen.dart';
 import '../../../checklist/presentation/screens/checklist_screen.dart';
 import '../../../calculator/presentation/screens/calculator_screen.dart';
 import '../../../security/presentation/screens/security_screen.dart';
 import '../bloc/home_bloc.dart';
-import '../../../../screens/export_assistant_screen.dart';
-import '../../../../screens/import_assistant_screen.dart';
-import '../../../../screens/knowledge_center_screen.dart';
-import '../../../../screens/nandina_classifier_screen.dart';
-import '../../../../screens/agents_screen.dart';
-import '../../../../screens/personal_info_screen.dart';
-import '../../../../screens/company_info_screen.dart';
-import '../../../../screens/api_erp_screen.dart';
+import '../../../assistant/presentation/screens/export_assistant_screen.dart';
+import '../../../assistant/presentation/screens/import_assistant_screen.dart';
+import '../../../academy/presentation/screens/knowledge_center_screen.dart';
+import '../../../assistant/presentation/screens/nandina_classifier_screen.dart';
+import '../../../assistant/presentation/screens/agents_screen.dart';
+import '../../../profile/presentation/screens/personal_info_screen.dart';
+import '../../../profile/presentation/screens/company_info_screen.dart';
+import '../../../profile/presentation/screens/notifications_screen.dart';
+import '../../../profile/presentation/screens/notification_settings_screen.dart';
+import '../../../profile/presentation/screens/my_tickets_screen.dart';
+import '../../../profile/presentation/screens/tutorials_screen.dart';
+import '../../../profile/presentation/screens/support_screen.dart';
+import '../../../erp/presentation/screens/api_erp_screen.dart';
+import '../../../logistics/presentation/screens/logistics_screen.dart';
+import '../../../history/presentation/screens/history_screen.dart';
+import '../../../repository/presentation/screens/repository_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -86,7 +94,8 @@ class _HomeView extends StatelessWidget {
             IconButton(
               icon: const NotificationBell(hasNotification: true),
               onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const AlertsScreen())),
+                  MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen())),
             ),
           ],
         ),
@@ -119,8 +128,7 @@ class _HomeView extends StatelessWidget {
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) =>
-                                    const ExportAssistantScreen())),
+                                builder: (_) => const ExportAssistantScreen())),
                       ),
                       QuickAccessItem(
                         icon: Icons.calculate_outlined,
@@ -144,13 +152,88 @@ class _HomeView extends StatelessWidget {
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) =>
-                                    const KnowledgeCenterScreen())),
+                                builder: (_) => const KnowledgeCenterScreen())),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
+                // ── Notifications quick-access card ───────────────────────
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen())),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppColors.colombiaBlue, Color(0xFF0050C8)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              AppColors.colombiaBlue.withValues(alpha: 0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 42,
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                              Icons.notifications_active_rounded,
+                              color: Colors.white,
+                              size: 22),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Notificaciones & Alertas',
+                                  style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white)),
+                              const SizedBox(height: 2),
+                              Text('3 notificaciones sin leer',
+                                  style: GoogleFonts.inter(
+                                      fontSize: 11,
+                                      color: Colors.white70)),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text('Ver →',
+                              style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 24),
+
                 SectionHeader(title: 'Cargas Activas', action: 'VER TODO'),
                 const SizedBox(height: 12),
                 _buildShipmentCard(
@@ -281,8 +364,10 @@ class _HomeView extends StatelessWidget {
             title: 'Nueva Exportación',
             subtitle: 'Iniciar proceso de exportación',
             color: AppColors.successGreen,
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const ExportAssistantScreen())),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const ExportAssistantScreen())),
           ),
           const SizedBox(height: 12),
           _operationTile(
@@ -290,8 +375,10 @@ class _HomeView extends StatelessWidget {
             title: 'Nueva Importación',
             subtitle: 'Iniciar proceso de importación',
             color: AppColors.infoBlue,
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const ImportAssistantScreen())),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const ImportAssistantScreen())),
           ),
           const SizedBox(height: 12),
           _operationTile(
@@ -308,8 +395,10 @@ class _HomeView extends StatelessWidget {
             title: 'Clasificador NANDINA',
             subtitle: 'Clasifica tu producto con IA',
             color: Colors.purple,
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const NandinaClassifierScreen())),
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => const NandinaClassifierScreen())),
           ),
         ],
       ),
@@ -417,8 +506,7 @@ class _HomeView extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: Colors.white)),
                       const SizedBox(height: 4),
-                      Text(
-                          'Clasificación inteligente y checklist automático',
+                      Text('Clasificación inteligente y checklist automático',
                           style: AppTextStyles.bodySmall
                               .copyWith(color: Colors.white70)),
                       const Spacer(),
@@ -518,17 +606,23 @@ class _HomeView extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             childAspectRatio: 1.4,
             children: [
-              _toolCard(Icons.folder_outlined, 'Repositorio',
-                  'Gestiona documentos'),
               _toolCard(
-                  Icons.history_rounded, 'Historial', 'Últimas consultas'),
+                  Icons.folder_outlined, 'Repositorio', 'Gestiona documentos',
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const RepositoryScreen()))),
+              _toolCard(
+                  Icons.history_rounded, 'Historial', 'Últimas consultas',
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const HistoryScreen()))),
               _toolCard(
                   Icons.notifications_outlined, 'Alertas', 'Regulaciones DIAN',
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const AlertsScreen()))),
+              _toolCard(Icons.map_outlined, 'Logística', 'Puertos y rutas',
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => const AlertsScreen()))),
-              _toolCard(Icons.map_outlined, 'Logística', 'Puertos y rutas'),
+                          builder: (_) => const LogisticsScreen()))),
             ],
           ),
         ],
@@ -624,15 +718,15 @@ class _HomeView extends StatelessWidget {
                 Text('TechCorp Solutions', style: AppTextStyles.bodySmall),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.primaryDarkNavy,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text('PLAN PRO',
-                      style:
-                          AppTextStyles.badgeText.copyWith(color: Colors.white)),
+                      style: AppTextStyles.badgeText
+                          .copyWith(color: Colors.white)),
                 ),
               ],
             ),
@@ -652,40 +746,40 @@ class _HomeView extends StatelessWidget {
               Icons.business_outlined,
               'Empresa',
               'TechCorp Solutions',
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const CompanyInfoScreen())),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const CompanyInfoScreen())),
             ),
             _profileItem(
               Icons.security_outlined,
               'Seguridad',
               'Contraseña y 2FA',
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const SecurityScreen())),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const SecurityScreen())),
             ),
             _profileItem(Icons.notifications_outlined, 'Notificaciones',
                 'Alertas y frecuencia',
-                badge: 'ENT'),
-            _profileItem(Icons.api_outlined, 'API / ERP',
-                'Sincronización SAP',
                 badge: 'ENT',
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const ApiErpScreen()))),
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const NotificationSettingsScreen()))),
+            _profileItem(Icons.api_outlined, 'API / ERP', 'Sincronización SAP',
+                badge: 'ENT',
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const ApiErpScreen()))),
           ]),
           const SizedBox(height: 16),
           _profileSection('CENTRO DE AYUDA', [
             _profileItem(Icons.confirmation_number_outlined, 'Mis Tickets',
-                'Soporte activo'),
+                'Soporte activo',
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const MyTicketsScreen()))),
             _profileItem(
-                Icons.play_circle_outline, 'Tutoriales', 'Videos de ayuda'),
+                Icons.play_circle_outline, 'Tutoriales', 'Videos de ayuda',
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const TutorialsScreen()))),
           ]),
           const SizedBox(height: 16),
-          CTAButton(label: '💬  Contactar Soporte', onTap: () {}),
+          CTAButton(label: '💬  Contactar Soporte', onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const SupportScreen()))),
         ],
       ),
     );
@@ -706,8 +800,7 @@ class _HomeView extends StatelessWidget {
                 .map((e) => Column(
                       children: [
                         e.value,
-                        if (e.key < items.length - 1)
-                          const Divider(height: 1),
+                        if (e.key < items.length - 1) const Divider(height: 1),
                       ],
                     ))
                 .toList(),
@@ -730,8 +823,7 @@ class _HomeView extends StatelessWidget {
           if (badge != null) ...[
             const SizedBox(width: 8),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.accentOrange,
                 borderRadius: BorderRadius.circular(4),
@@ -779,9 +871,8 @@ class _HomeView extends StatelessWidget {
               final (activeIcon, inactiveIcon, label) = e.value;
               return Expanded(
                 child: GestureDetector(
-                  onTap: () => context
-                      .read<HomeBloc>()
-                      .add(ChangeHomeTab(e.key)),
+                  onTap: () =>
+                      context.read<HomeBloc>().add(ChangeHomeTab(e.key)),
                   behavior: HitTestBehavior.opaque,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
