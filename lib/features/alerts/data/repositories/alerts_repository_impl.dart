@@ -1,11 +1,13 @@
+import 'package:dartz/dartz.dart';
+import '../../../../core/error/failures.dart';
 import '../../domain/entities/alert_entity.dart';
 import '../../domain/repositories/alerts_repository.dart';
 
 class AlertsRepositoryImpl implements AlertsRepository {
   @override
-  Future<List<AlertEntity>> getAlerts() async {
+  Future<Either<Failure, List<AlertEntity>>> getAlerts() async {
     // Mock data – reemplazar por API/local DB en el futuro
-    return const [
+    return const Right([
       AlertEntity(
         priority: AlertPriority.alta,
         date: '14 Oct 2024',
@@ -45,6 +47,6 @@ class AlertsRepositoryImpl implements AlertsRepository {
         summary: 'El portal VUCE tendrá mantenimiento el próximo fin de semana.',
         institution: 'MinCIT',
       ),
-    ];
+    ]);
   }
 }

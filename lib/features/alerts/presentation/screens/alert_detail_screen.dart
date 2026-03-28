@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../../domain/entities/alert_entity.dart';
+import '../utils/alert_priority_styles.dart';
 
 class AlertDetailScreen extends StatelessWidget {
   final AlertEntity alert;

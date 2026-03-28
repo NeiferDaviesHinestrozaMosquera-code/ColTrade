@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/auth/auth_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String maskedEmail;
@@ -113,7 +114,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           _focusNodes[0].requestFocus();
         }
         if (state is AuthSuccess) {
-          Navigator.pushReplacementNamed(context, '/home');
+          context.go('/home');
         }
       },
       builder: (context, state) {
@@ -126,7 +127,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
             leading: IconButton(
               icon: const Icon(Icons.close_rounded,
                   color: AppColors.accentOrange, size: 22),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
             ),
           ),
           body: SafeArea(

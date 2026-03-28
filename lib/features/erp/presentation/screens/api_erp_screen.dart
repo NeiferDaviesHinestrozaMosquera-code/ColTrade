@@ -145,7 +145,7 @@ class _ApiErpScreenState extends State<ApiErpScreen>
               style: GoogleFonts.inter(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary),
+                  color: const Color.fromARGB(255, 255, 255, 255)),
             ),
             const SizedBox(width: 8),
             Container(
@@ -163,7 +163,7 @@ class _ApiErpScreenState extends State<ApiErpScreen>
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primaryDarkNavy,
-          unselectedLabelColor: AppColors.textSecondary,
+          unselectedLabelColor: const Color.fromARGB(255, 255, 255, 255),
           indicatorColor: AppColors.accentOrange,
           indicatorWeight: 2.5,
           labelStyle:
@@ -1122,4 +1122,3 @@ class _ApiErpScreenState extends State<ApiErpScreen>
     );
   }
 }
-

@@ -4,8 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/auth/auth_bloc.dart';
-import 'register_screen.dart';
-import 'forgot_password_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -58,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }
           if (state is AuthSuccess) {
             // Navigate to home on successful login
-            Navigator.pushReplacementNamed(context, '/home');
+            context.go('/home');
           }
         },
         builder: (context, state) {
@@ -203,15 +202,7 @@ class _LoginBody extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider(
-                              create: (_) => AuthBloc(),
-                              child: const ForgotPasswordScreen(),
-                            ),
-                          ),
-                        );
+                        context.push('/forgot-password');
                       },
                       child: Text(
                         '¿Olvidaste tu contraseña?',
@@ -251,15 +242,7 @@ class _LoginBody extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider(
-                                create: (_) => AuthBloc(),
-                                child: const RegisterScreen(),
-                              ),
-                            ),
-                          );
+                          context.push('/register');
                         },
                         child: Text(
                           'Regístrate',

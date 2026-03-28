@@ -6,11 +6,8 @@ import '../features/alerts/presentation/bloc/alerts_bloc.dart';
 import '../features/checklist/presentation/bloc/checklist_bloc.dart';
 import '../features/calculator/presentation/bloc/calculator_bloc.dart';
 import '../features/security/presentation/bloc/security_bloc.dart';
+import '../features/security/presentation/bloc/auth/auth_bloc.dart';
 import '../features/home/presentation/bloc/home_bloc.dart';
-import '../features/profile/presentation/bloc/profile_bloc.dart';
-import '../features/academy/presentation/bloc/academy_bloc.dart';
-import '../features/assistant/presentation/bloc/assistant_bloc.dart';
-import '../features/erp/presentation/bloc/erp_bloc.dart';
 
 final GetIt sl = GetIt.instance;
 
@@ -29,8 +26,6 @@ void setupDependencies() {
   sl.registerFactory(() => ChecklistBloc());
   sl.registerFactory(() => CalculatorBloc());
   sl.registerFactory(() => SecurityBloc());
-  sl.registerFactory(() => ProfileBloc());
-  sl.registerFactory(() => AcademyBloc());
-  sl.registerFactory(() => AssistantBloc());
-  sl.registerFactory(() => ErpBloc());
+  sl.registerFactory(() => AuthBloc());
 }
+

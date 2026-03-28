@@ -14,16 +14,15 @@ class AlertsBloc extends Bloc<AlertsEvent, AlertsState> {
 
   Future<void> _onLoad(LoadAlerts event, Emitter<AlertsState> emit) async {
     emit(AlertsLoading());
-    try {
-      final alerts = await getAlerts(NoParams());
-      emit(AlertsLoaded(
+    final failureOrAlerts = await getAlerts(NoParams());
+    failureOrAlerts.fold(
+      (failure) => emit(AlertsError(failure.message)),
+      (alerts) => emit(AlertsLoaded(
         allAlerts: alerts,
         filtered: alerts,
         activeFilter: 'Todas',
-      ));
-    } catch (e) {
-      emit(AlertsError(e.toString()));
-    }
+      )),
+    );
   }
 
   void _onFilter(FilterAlerts event, Emitter<AlertsState> emit) {

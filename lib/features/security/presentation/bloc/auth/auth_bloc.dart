@@ -20,8 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       LoginSubmitted event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
     await Future.delayed(const Duration(milliseconds: 1200));
-    // Simulate: any non-empty email + password hash check passes
-    final _ = PasswordHasher.hash(event.password);
+    // Simulate: any non-empty email + password >= 6 chars passes
     if (event.email.contains('@') && event.password.length >= 6) {
       emit(const AuthSuccess());
     } else {
@@ -37,9 +36,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthFailure('Las contraseñas no coinciden.'));
       return;
     }
-    final hashedPassword = PasswordHasher.hash(event.password);
-    // Simulate storing user with hashed password
-    final _ = hashedPassword;
+    // Simulate storing user with salted hashed password
+    PasswordHasher.hash(event.password);
     final maskedEmail = _maskEmail(event.user.email);
     emit(OtpSent(maskedEmail: maskedEmail, flowType: OtpFlowType.register));
   }
@@ -80,8 +78,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthFailure('Las contraseñas no coinciden.'));
       return;
     }
-    final hashedPassword = PasswordHasher.hash(event.password);
-    final _ = hashedPassword; // would be sent to backend
+    // Simulate: salted hash would be sent to backend
+    PasswordHasher.hash(event.password);
     emit(const PasswordResetSuccess());
   }
 

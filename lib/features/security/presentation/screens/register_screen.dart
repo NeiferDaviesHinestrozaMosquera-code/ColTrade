@@ -5,7 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../../../../features/security/domain/entities/auth_entity.dart';
 import '../bloc/auth/auth_bloc.dart';
-import 'otp_verification_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -82,17 +82,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
         }
         if (state is OtpSent) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => BlocProvider.value(
-                value: context.read<AuthBloc>(),
-                child: OtpVerificationScreen(
-                  maskedEmail: state.maskedEmail,
-                  flowType: state.flowType,
-                ),
-              ),
-            ),
+          context.push(
+            '/otp',
+            extra: {
+              'maskedEmail': state.maskedEmail,
+              'flowType': state.flowType,
+            },
           );
         }
       },
@@ -385,7 +380,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Text('¿Ya tienes una cuenta?',
                               style: AppTextStyles.bodyRegular),
                           TextButton(
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () => context.go('/login'),
                             child: Text(
                               'Inicia Sesión',
                               style: AppTextStyles.bodyRegular.copyWith(

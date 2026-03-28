@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../domain/entities/alert_entity.dart';
 
-enum AlertPriority { alta, media, baja, informativo, tlc }
-
+/// Presentation-layer styles for [AlertPriority].
+/// Moved here from the domain entity to keep domain free of Flutter imports.
 extension AlertPriorityStyle on AlertPriority {
   (Color border, Color badge, String label) get style => switch (this) {
         AlertPriority.alta => (
@@ -31,20 +32,4 @@ extension AlertPriorityStyle on AlertPriority {
             'ACTUALIZACIÓN TLC'
           ),
       };
-}
-
-class AlertModel {
-  final AlertPriority priority;
-  final String date;
-  final String title;
-  final String summary;
-  final String institution;
-
-  AlertModel({
-    required this.priority,
-    required this.date,
-    required this.title,
-    required this.summary,
-    required this.institution,
-  });
 }

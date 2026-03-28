@@ -267,14 +267,18 @@ class _NotificationsView extends StatelessWidget {
           groups.putIfAbsent(n.dateGroup, () => []).add(n);
         }
 
-        return ListView(
+        final flattenedWidgets = <Widget>[];
+        for (final entry in groups.entries) {
+          flattenedWidgets.add(_buildDateHeader(entry.key));
+          for (final n in entry.value) {
+            flattenedWidgets.add(_NotificationTile(notification: n));
+          }
+        }
+
+        return ListView.builder(
           padding: const EdgeInsets.only(bottom: 24, top: 8),
-          children: [
-            for (final entry in groups.entries) ...[
-              _buildDateHeader(entry.key),
-              for (final n in entry.value) _NotificationTile(notification: n),
-            ],
-          ],
+          itemCount: flattenedWidgets.length,
+          itemBuilder: (context, index) => flattenedWidgets[index],
         );
       },
     );
