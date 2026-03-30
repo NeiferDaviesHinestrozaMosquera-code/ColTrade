@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/erp_bloc.dart';
+import '../bloc/erp_event.dart';
+import '../bloc/erp_state.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
@@ -43,7 +47,6 @@ class _ApiErpScreenState extends State<ApiErpScreen>
   bool _syncOnExport = true;
   bool _syncOnImport = false;
   bool _showApiKey = false;
-  bool _syncing = false;
 
   final _webhookCtrl = TextEditingController(
       text: 'https://api.techcorp.com.co/webhooks/coltrade');
@@ -100,21 +103,8 @@ class _ApiErpScreenState extends State<ApiErpScreen>
     super.dispose();
   }
 
-  Future<void> _triggerSync() async {
-    setState(() => _syncing = true);
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return;
-    setState(() => _syncing = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Sincronización completada con SAP Business One',
-            style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
-        backgroundColor: AppColors.successGreen,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
+  void _triggerSync() {
+    context.read<ErpBloc>().add(SyncErpDataEvent());
   }
 
   void _copyApiKey() {
@@ -177,25 +167,55 @@ class _ApiErpScreenState extends State<ApiErpScreen>
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildConexiones(),
-          _buildApiKey(),
-          _buildSincronizacion(),
-        ],
+      body: BlocConsumer<ErpBloc, ErpState>(
+        listener: (context, state) {
+          if (state is ErpSyncSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Sincronización completada con conectores activos',
+                    style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
+                backgroundColor: AppColors.successGreen,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                margin: const EdgeInsets.all(16),
+              ),
+            );
+          } else if (state is ErpSyncError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error: ${state.message}',
+                    style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
+                backgroundColor: AppColors.errorRed,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                margin: const EdgeInsets.all(16),
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          final isSyncing = state is ErpSyncing;
+          return TabBarView(
+            controller: _tabController,
+            children: [
+              _buildConexiones(isSyncing: isSyncing),
+              _buildApiKey(),
+              _buildSincronizacion(isSyncing: isSyncing),
+            ],
+          );
+        },
       ),
     );
   }
 
   // ── Tab 1: Conexiones ERP ─────────────────────────────────────────────────
 
-  Widget _buildConexiones() {
+  Widget _buildConexiones({required bool isSyncing}) {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
         // Summary banner
-        _buildStatusBanner(),
+        _buildStatusBanner(isSyncing: isSyncing),
         const SizedBox(height: 20),
 
         Text('SISTEMAS DISPONIBLES', style: AppTextStyles.labelUppercase),
@@ -215,7 +235,7 @@ class _ApiErpScreenState extends State<ApiErpScreen>
     );
   }
 
-  Widget _buildStatusBanner() {
+  Widget _buildStatusBanner({required bool isSyncing}) {
     final connected =
         _erps.where((e) => e.status == ErpStatus.connected).length;
     return Container(
@@ -253,14 +273,14 @@ class _ApiErpScreenState extends State<ApiErpScreen>
             ),
           ),
           GestureDetector(
-            onTap: _syncing ? null : _triggerSync,
+            onTap: isSyncing ? null : _triggerSync,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.white38),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: _syncing
+              child: isSyncing
                   ? const SizedBox(
                       width: 16,
                       height: 16,
@@ -369,21 +389,22 @@ class _ApiErpScreenState extends State<ApiErpScreen>
               const SizedBox(height: 12),
               const Divider(height: 1),
               const SizedBox(height: 10),
-              Row(
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   _actionChip(
                     Icons.settings_outlined,
                     'Configurar',
                     onTap: () => _showConfigDialog(erp),
                   ),
-                  const SizedBox(width: 8),
                   _actionChip(
                     Icons.sync_rounded,
                     'Sincronizar ahora',
                     onTap: _triggerSync,
                     color: AppColors.successGreen,
                   ),
-                  const Spacer(),
                   _actionChip(
                     Icons.link_off_rounded,
                     'Desconectar',
@@ -687,7 +708,7 @@ class _ApiErpScreenState extends State<ApiErpScreen>
 
   // ── Tab 3: Sincronización ─────────────────────────────────────────────────
 
-  Widget _buildSincronizacion() {
+  Widget _buildSincronizacion({required bool isSyncing}) {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -722,7 +743,7 @@ class _ApiErpScreenState extends State<ApiErpScreen>
               ),
               const SizedBox(width: 12),
               GestureDetector(
-                onTap: _syncing ? null : _triggerSync,
+                onTap: isSyncing ? null : _triggerSync,
                 child: Container(
                   width: 48,
                   height: 48,
@@ -730,7 +751,7 @@ class _ApiErpScreenState extends State<ApiErpScreen>
                     color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
-                  child: _syncing
+                  child: isSyncing
                       ? const Padding(
                           padding: EdgeInsets.all(12),
                           child: CircularProgressIndicator(

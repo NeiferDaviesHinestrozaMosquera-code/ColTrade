@@ -26,3 +26,18 @@ class AssistantError extends AssistantState {
   @override
   List<Object> get props => [message];
 }
+
+class AssistantContactSending extends AssistantState {}
+
+class AssistantContactSuccess extends AssistantState {}
+
+class AssistantNandinaClassifying extends AssistantState {}
+
+class AssistantNandinaResult extends AssistantState {
+  final Map<String, dynamic> result;
+
+  const AssistantNandinaResult({required this.result});
+
+  @override
+  List<Object> get props => [result];
+}

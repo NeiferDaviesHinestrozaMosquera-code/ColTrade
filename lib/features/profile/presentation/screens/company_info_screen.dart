@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
+import '../bloc/profile_bloc.dart';
+import '../bloc/profile_event.dart';
+import '../bloc/profile_state.dart';
 
 class CompanyInfoScreen extends StatefulWidget {
   const CompanyInfoScreen({super.key});
@@ -25,7 +29,6 @@ class _CompanyInfoScreenState extends State<CompanyInfoScreen> {
 
   String? _actividadEconomica;
   String? _regimenTributario;
-  bool _saving = false;
 
   final _actividades = [
     'Comercio al por mayor',
@@ -58,50 +61,65 @@ class _CompanyInfoScreenState extends State<CompanyInfoScreen> {
     super.dispose();
   }
 
-  Future<void> _onSave() async {
+  void _onSave() {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _saving = true);
-    await Future.delayed(const Duration(milliseconds: 900));
-    if (!mounted) return;
-    setState(() => _saving = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Datos de empresa guardados',
-            style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
-        backgroundColor: AppColors.successGreen,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
+    
+    final companyData = {
+      'razonSocial': _razonSocialCtrl.text,
+      'nit': _nitCtrl.text,
+      'direccion': _direccionCtrl.text,
+      'ciudad': _ciudadCtrl.text,
+      'departamento': _departamentoCtrl.text,
+      'email': _emailEmpresaCtrl.text,
+      'telefono': _telefonoEmpresaCtrl.text,
+      'actividad': _actividadEconomica,
+      'regimen': _regimenTributario,
+    };
+    
+    context.read<ProfileBloc>().add(UpdateCompanyProfileEvent(companyData));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: ColTradeAppBar(
+      appBar: const ColTradeAppBar(
         title: 'Datos de Empresa',
         dark: true,
-        actions: [
-          TextButton(
-            onPressed: _saving ? null : _onSave,
-            child: Text(
-              'Guardar',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentOrange,
-              ),
-            ),
-          ),
-        ],
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
+      body: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileUpdateSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Datos de empresa guardados',
+                    style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
+                backgroundColor: AppColors.successGreen,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                margin: const EdgeInsets.all(16),
+              ),
+            );
+          } else if (state is ProfileUpdateError) {
+             ScaffoldMessenger.of(context).showSnackBar(
+               SnackBar(
+                 content: Text('Error al guardar: ${state.message}',
+                     style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
+                 backgroundColor: AppColors.errorRed,
+                 behavior: SnackBarBehavior.floating,
+                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                 margin: const EdgeInsets.all(16),
+               ),
+             );
+          }
+        },
+        builder: (context, state) {
+          final isSaving = state is ProfileUpdating;
+          return Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
             // ── Company Header Card ────────────────────────────────────────
             Container(
               padding: const EdgeInsets.all(20),
@@ -416,8 +434,8 @@ class _CompanyInfoScreenState extends State<CompanyInfoScreen> {
             const SizedBox(height: 28),
 
             CTAButton(
-              label: _saving ? 'Guardando...' : '✅  Guardar Empresa',
-              onTap: _saving ? null : _onSave,
+              label: isSaving ? 'Guardando...' : '✅  Guardar Empresa',
+              onTap: isSaving ? null : _onSave,
               backgroundColor: AppColors.accentOrange,
             ),
             const SizedBox(height: 16),
@@ -427,9 +445,10 @@ class _CompanyInfoScreenState extends State<CompanyInfoScreen> {
               onTap: () => Navigator.pop(context),
             ),
             const SizedBox(height: 30),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 

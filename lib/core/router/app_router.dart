@@ -36,6 +36,10 @@ import '../../features/profile/presentation/screens/notifications_screen.dart';
 import '../../features/profile/presentation/screens/notification_settings_screen.dart';
 import '../../features/profile/presentation/screens/tutorials_screen.dart';
 import '../../features/profile/presentation/screens/support_screen.dart';
+import '../../features/profile/presentation/screens/subscription_plans_screen.dart';
+
+// Subscription BLoC
+import '../../features/subscription/presentation/bloc/subscription_bloc.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/home',
@@ -158,6 +162,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/support',
       builder: (context, state) => const SupportScreen(),
+    ),
+    GoRoute(
+      path: '/subscription-plans',
+      builder: (context, state) => BlocProvider<SubscriptionBloc>(
+        create: (_) => sl<SubscriptionBloc>(),
+        child: const SubscriptionPlansScreen(),
+      ),
     ),
   ],
 );

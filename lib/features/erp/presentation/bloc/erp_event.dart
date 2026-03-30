@@ -8,3 +8,5 @@ abstract class ErpEvent extends Equatable {
 }
 
 class ConnectErpEvent extends ErpEvent {}
+
+class SyncErpDataEvent extends ErpEvent {}

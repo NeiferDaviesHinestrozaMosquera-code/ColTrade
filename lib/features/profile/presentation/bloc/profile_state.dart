@@ -27,3 +27,16 @@ class ProfileError extends ProfileState {
   @override
   List<Object> get props => [message];
 }
+
+class ProfileUpdating extends ProfileState {}
+
+class ProfileUpdateSuccess extends ProfileState {}
+
+class ProfileUpdateError extends ProfileState {
+  final String message;
+
+  const ProfileUpdateError({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}

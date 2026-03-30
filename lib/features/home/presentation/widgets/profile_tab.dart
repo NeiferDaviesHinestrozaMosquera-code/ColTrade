@@ -1,29 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../injection/injection.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../erp/presentation/bloc/erp_bloc.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../alerts/presentation/screens/alerts_screen.dart';
-import '../../../checklist/presentation/screens/checklist_screen.dart';
-import '../../../calculator/presentation/screens/calculator_screen.dart';
 import '../../../security/presentation/screens/security_screen.dart';
-import '../bloc/home_bloc.dart';
-import '../../../assistant/presentation/screens/export_assistant_screen.dart';
-import '../../../assistant/presentation/screens/import_assistant_screen.dart';
 import '../../../academy/presentation/screens/knowledge_center_screen.dart';
-import '../../../assistant/presentation/screens/nandina_classifier_screen.dart';
-import '../../../assistant/presentation/screens/agents_screen.dart';
 import '../../../profile/presentation/screens/personal_info_screen.dart';
 import '../../../profile/presentation/screens/company_info_screen.dart';
-import '../../../profile/presentation/screens/notifications_screen.dart';
 import '../../../profile/presentation/screens/notification_settings_screen.dart';
 import '../../../profile/presentation/screens/my_tickets_screen.dart';
 import '../../../profile/presentation/screens/tutorials_screen.dart';
 import '../../../profile/presentation/screens/support_screen.dart';
 import '../../../erp/presentation/screens/api_erp_screen.dart';
-import '../../../logistics/presentation/screens/logistics_screen.dart';
-import '../../../history/presentation/screens/history_screen.dart';
-import '../../../repository/presentation/screens/repository_screen.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -33,7 +25,7 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const ColTradeAppBar(title: 'Perfil', dark: false),
+      appBar: const ColTradeAppBar(title: 'Perfil', dark: true),
       backgroundColor: AppColors.background,
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -98,7 +90,8 @@ class ProfileTab extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
+          _buildSubscriptionBanner(context, isPro: true),
           _profileSection('CONFIGURACIÓN', [
             _profileItem(
               Icons.person_outline,
@@ -113,8 +106,13 @@ class ProfileTab extends StatelessWidget {
               Icons.business_outlined,
               'Empresa',
               'TechCorp Solutions',
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const CompanyInfoScreen())),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                            create: (_) => sl<ProfileBloc>(),
+                            child: const CompanyInfoScreen(),
+                          ))),
             ),
             _profileItem(
               Icons.security_outlined,
@@ -126,27 +124,46 @@ class ProfileTab extends StatelessWidget {
             _profileItem(Icons.notifications_outlined, 'Notificaciones',
                 'Alertas y frecuencia',
                 badge: 'ENT',
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const NotificationSettingsScreen()))),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const NotificationSettingsScreen()))),
             _profileItem(Icons.api_outlined, 'API / ERP', 'Sincronización SAP',
                 badge: 'ENT',
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const ApiErpScreen()))),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                              create: (_) => sl<ErpBloc>(),
+                              child: const ApiErpScreen(),
+                            )))),
           ]),
           const SizedBox(height: 16),
           _profileSection('CENTRO DE AYUDA', [
             _profileItem(Icons.confirmation_number_outlined, 'Mis Tickets',
                 'Soporte activo',
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const MyTicketsScreen()))),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const MyTicketsScreen()))),
+            _profileItem(
+                Icons.school_outlined, 'Academia', 'Cursos y aprendizaje',
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const KnowledgeCenterScreen()))),
             _profileItem(
                 Icons.play_circle_outline, 'Tutoriales', 'Videos de ayuda',
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const TutorialsScreen()))),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const TutorialsScreen()))),
           ]),
           const SizedBox(height: 16),
-          CTAButton(label: '💬  Contactar Soporte', onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (_) => const SupportScreen()))),
+          CTAButton(
+              label: '💬  Contactar Soporte',
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const SupportScreen()))),
         ],
       ),
     );
@@ -208,5 +225,140 @@ class ProfileTab extends StatelessWidget {
     );
   }
 
+  Widget _buildSubscriptionBanner(BuildContext context, {bool isPro = true}) {
+    if (isPro) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: 24),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [AppColors.primaryDarkNavy, Color(0xFF1E3A8A)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryDarkNavy.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.star_rounded,
+                  color: AppColors.yellowAmber, size: 28),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Plan PRO Activo',
+                      style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                  const SizedBox(height: 4),
+                  Text('Acceso total a inteligencia artificial y asistentes',
+                      style: AppTextStyles.caption
+                          .copyWith(color: Colors.white70)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: () => context.go('/home'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white.withValues(alpha: 0.15),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                minimumSize: Size.zero,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+              ),
+              child: Text('Gestionar',
+                  style: GoogleFonts.inter(
+                      fontSize: 12, fontWeight: FontWeight.w600)),
+            ),
+          ],
+        ),
+      );
+    }
 
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child:
+                const Icon(Icons.bolt_rounded, color: Colors.white, size: 28),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Desbloquea todo el potencial',
+                    style: GoogleFonts.inter(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
+                const SizedBox(height: 4),
+                Text('Potencia tus operaciones con ColTrade PRO',
+                    style: AppTextStyles.caption
+                        .copyWith(color: Colors.white.withValues(alpha: 0.9))),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () => context.go('/home'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: const Color(0xFFD97706),
+              elevation: 0,
+              minimumSize: Size.zero,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+            child: Text('Mejorar',
+                style: GoogleFonts.inter(
+                    fontSize: 12, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
 }

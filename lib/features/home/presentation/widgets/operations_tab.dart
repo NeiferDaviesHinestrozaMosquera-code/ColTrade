@@ -3,17 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../alerts/presentation/screens/alerts_screen.dart';
-import '../../../checklist/presentation/screens/checklist_screen.dart';
-import '../../../calculator/presentation/screens/calculator_screen.dart';
-import '../../../security/presentation/screens/security_screen.dart';
-import '../bloc/home_bloc.dart';
+import '../../../../injection/injection.dart';
+import '../../../assistant/presentation/bloc/assistant_bloc.dart';
 import '../../../assistant/presentation/screens/export_assistant_screen.dart';
 import '../../../assistant/presentation/screens/import_assistant_screen.dart';
-import '../../../academy/presentation/screens/knowledge_center_screen.dart';
 import '../../../assistant/presentation/screens/nandina_classifier_screen.dart';
-import '../../../assistant/presentation/screens/agents_screen.dart';
-import '../../../profile/presentation/screens/personal_info_screen.dart';
 import '../../../profile/presentation/screens/company_info_screen.dart';
 import '../../../profile/presentation/screens/notifications_screen.dart';
 import '../../../profile/presentation/screens/notification_settings_screen.dart';
@@ -39,45 +33,39 @@ class OperationsTab extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         children: [
           _operationTile(
+            icon: Icons.search_rounded,
+            title: 'Clasificador NANDINA',
+            subtitle: 'Paso previo: Clasifica tu producto con IA',
+            gradientColors: const [Color(0xFF8B5CF6), Color(0xFF6D28D9)],
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => BlocProvider(
+                          create: (_) => sl<AssistantBloc>(),
+                          child: const NandinaClassifierScreen(),
+                        ))),
+          ),
+          const SizedBox(height: 16),
+          _operationTile(
             icon: Icons.upload_rounded,
             title: 'Nueva Exportación',
             subtitle: 'Iniciar proceso de exportación',
-            color: AppColors.successGreen,
+            gradientColors: const [Color(0xFF10B981), Color(0xFF047857)],
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (_) => const ExportAssistantScreen())),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           _operationTile(
             icon: Icons.download_rounded,
             title: 'Nueva Importación',
             subtitle: 'Iniciar proceso de importación',
-            color: AppColors.infoBlue,
+            gradientColors: const [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (_) => const ImportAssistantScreen())),
-          ),
-          const SizedBox(height: 12),
-          _operationTile(
-            icon: Icons.checklist_rounded,
-            title: 'Checklist Inteligente',
-            subtitle: 'Gestiona tus documentos',
-            color: AppColors.accentOrange,
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const ChecklistScreen())),
-          ),
-          const SizedBox(height: 12),
-          _operationTile(
-            icon: Icons.search_rounded,
-            title: 'Clasificador NANDINA',
-            subtitle: 'Clasifica tu producto con IA',
-            color: Colors.purple,
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const NandinaClassifierScreen())),
           ),
         ],
       ),
@@ -88,37 +76,71 @@ class OperationsTab extends StatelessWidget {
     required IconData icon,
     required String title,
     required String subtitle,
-    required Color color,
+    required List<Color> gradientColors,
     VoidCallback? onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: AppDecorations.card,
-        child: Row(
+        height: 120,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors[0].withValues(alpha: 0.4),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 24),
+            Positioned(
+              right: -10,
+              top: -10,
+              child: Icon(icon, size: 100, color: Colors.white.withValues(alpha: 0.15)),
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: AppTextStyles.cardTitle),
-                  Text(subtitle, style: AppTextStyles.caption),
-                ],
-              ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(title, 
+                          style: GoogleFonts.inter(
+                              color: Colors.white, 
+                              fontSize: 18, 
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      Text(subtitle, 
+                          style: GoogleFonts.inter(
+                              color: Colors.white.withValues(alpha: 0.9), 
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400)),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios_rounded,
+                    size: 16, color: Colors.white),
+              ],
             ),
-            const Icon(Icons.arrow_forward_ios_rounded,
-                size: 14, color: AppColors.textSecondary),
           ],
         ),
       ),

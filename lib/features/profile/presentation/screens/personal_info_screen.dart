@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 
@@ -24,7 +26,51 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   String _tipoDoc = 'CC';
   bool _saving = false;
 
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+
   final _tiposDoc = ['CC', 'CE', 'NIT', 'Pasaporte', 'TI'];
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: source);
+      if (pickedFile != null && mounted) {
+        setState(() => _imageFile = File(pickedFile.path));
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+    }
+  }
+
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt_rounded),
+              title: const Text('Tomar foto'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_rounded),
+              title: const Text('Seleccionar de la galería'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -59,22 +105,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: ColTradeAppBar(
+      appBar: const ColTradeAppBar(
         title: 'Información Personal',
         dark: true,
-        actions: [
-          TextButton(
-            onPressed: _saving ? null : _onSave,
-            child: Text(
-              'Guardar',
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.accentOrange,
-              ),
-            ),
-          ),
-        ],
       ),
       body: Form(
         key: _formKey,
@@ -92,25 +125,33 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       Container(
                         width: 80,
                         height: 80,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: AppColors.primaryDarkNavy,
                           shape: BoxShape.circle,
+                          image: _imageFile != null
+                              ? DecorationImage(
+                                  image: FileImage(_imageFile!),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
                         ),
-                        child: const Center(
-                          child: Text(
-                            'CR',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        child: _imageFile == null
+                            ? const Center(
+                                child: Text(
+                                  'CR',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : null,
                       ),
                       Positioned(
                         right: 0,
                         bottom: 0,
                         child: GestureDetector(
-                          onTap: () {},
+                          onTap: _showImageSourceDialog,
                           child: Container(
                             width: 26,
                             height: 26,

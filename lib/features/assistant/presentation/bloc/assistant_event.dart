@@ -8,3 +8,27 @@ abstract class AssistantEvent extends Equatable {
 }
 
 class LoadAssistantDataEvent extends AssistantEvent {}
+
+class ContactAgentEvent extends AssistantEvent {
+  final String agentId;
+  final String type;
+  final String message;
+
+  const ContactAgentEvent({
+    required this.agentId,
+    required this.type,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [agentId, type, message];
+}
+
+class ClassifyNandinaEvent extends AssistantEvent {
+  final String query;
+
+  const ClassifyNandinaEvent({required this.query});
+
+  @override
+  List<Object> get props => [query];
+}

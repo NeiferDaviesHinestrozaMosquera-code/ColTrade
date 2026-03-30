@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
+import '../../../../injection/injection.dart';
+import '../bloc/assistant_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/agent.dart';
 import 'agent_profile_screen.dart';
 import 'agent_contact_screen.dart';
@@ -302,7 +305,10 @@ class _AgentsScreenState extends State<AgentsScreen> {
                   onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => AgentContactScreen(agent: agent))),
+                          builder: (_) => BlocProvider(
+                                create: (_) => sl<AssistantBloc>(),
+                                child: AgentContactScreen(agent: agent),
+                              ))),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryDarkNavy,
                     shape: RoundedRectangleBorder(

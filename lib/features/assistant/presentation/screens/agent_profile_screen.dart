@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../../../core/theme/app_theme.dart';
+import '../../../../injection/injection.dart';
+import '../bloc/assistant_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/agent.dart';
 import 'agent_contact_screen.dart';
 
@@ -103,7 +105,10 @@ class AgentProfileScreen extends StatelessWidget {
           child: SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => AgentContactScreen(agent: agent))),
+              onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => BlocProvider(
+                create: (_) => sl<AssistantBloc>(),
+                child: AgentContactScreen(agent: agent),
+              ))),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryDarkNavy,
                 padding: const EdgeInsets.symmetric(vertical: 16),

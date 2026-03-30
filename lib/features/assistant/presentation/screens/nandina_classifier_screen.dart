@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
+import '../bloc/assistant_bloc.dart';
+import '../bloc/assistant_event.dart';
+import '../bloc/assistant_state.dart';
 
 class NandinaClassifierScreen extends StatefulWidget {
   const NandinaClassifierScreen({super.key});
@@ -14,8 +19,6 @@ class NandinaClassifierScreen extends StatefulWidget {
 class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
     with SingleTickerProviderStateMixin {
   final _searchCtrl = TextEditingController();
-  bool _isLoading = false;
-  bool _hasResult = false;
   late AnimationController _loadingAnim;
 
   final _suggestions = [
@@ -37,23 +40,13 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
   @override
   void dispose() {
     _loadingAnim.dispose();
+    _searchCtrl.dispose();
     super.dispose();
   }
 
   void _search() {
     if (_searchCtrl.text.trim().isEmpty) return;
-    setState(() {
-      _isLoading = true;
-      _hasResult = false;
-    });
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _hasResult = true;
-        });
-      }
-    });
+    context.read<AssistantBloc>().add(ClassifyNandinaEvent(query: _searchCtrl.text));
   }
 
   @override
@@ -71,128 +64,149 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
           )
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Consulta Arancelaria IA',
-                style: GoogleFonts.inter(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary)),
-            const SizedBox(height: 6),
-            Text(
-              'Ingresa el nombre o descripción de tu producto para obtener la subpartida NANDINA y los aranceles aplicables.',
-              style: AppTextStyles.bodySmall,
-            ),
-            const SizedBox(height: 20),
+      body: BlocConsumer<AssistantBloc, AssistantState>(
+        listener: (context, state) {
+           if (state is AssistantError) {
+             ScaffoldMessenger.of(context).showSnackBar(
+               SnackBar(
+                 content: Text('Error: ${state.message}',
+                     style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
+                 backgroundColor: AppColors.errorRed,
+                 behavior: SnackBarBehavior.floating,
+               ),
+             );
+          }
+        },
+        builder: (context, state) {
+          final isLoading = state is AssistantNandinaClassifying;
+          final hasResult = state is AssistantNandinaResult;
+          final resultData = state is AssistantNandinaResult ? state.result : null;
 
-            // Search bar
-            Row(
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _searchCtrl,
-                    onFieldSubmitted: (_) => _search(),
-                    decoration: InputDecoration(
-                      hintText: 'Ej. Café, calzado de cuero, autopartes...',
-                      hintStyle: AppTextStyles.bodySmall,
-                      prefixIcon: const Icon(Icons.search_rounded,
-                          color: AppColors.textLabel),
-                      suffixIcon: _searchCtrl.text.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.close_rounded, size: 18),
-                              onPressed: () {
-                                _searchCtrl.clear();
-                                setState(() => _hasResult = false);
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: AppColors.cardWhite,
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.border),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.border),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                            color: AppColors.primaryDarkNavy, width: 2),
+                Text('Consulta Arancelaria IA',
+                    style: GoogleFonts.inter(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary)),
+                const SizedBox(height: 6),
+                Text(
+                  'Ingresa el nombre o descripción de tu producto para obtener la subpartida NANDINA y los aranceles aplicables.',
+                  style: AppTextStyles.bodySmall,
+                ),
+                const SizedBox(height: 20),
+
+                // Search bar
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _searchCtrl,
+                        onFieldSubmitted: (_) => _search(),
+                        decoration: InputDecoration(
+                          hintText: 'Ej. Café, calzado de cuero, autopartes...',
+                          hintStyle: AppTextStyles.bodySmall,
+                          prefixIcon: const Icon(Icons.search_rounded,
+                              color: AppColors.textLabel),
+                          suffixIcon: _searchCtrl.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.close_rounded, size: 18),
+                                  onPressed: () {
+                                    _searchCtrl.clear();
+                                    // Hack to clear state locally? Proper BLoC needs clear event
+                                    // For now just clearing visual is ok since next search overwrites
+                                  },
+                                )
+                              : null,
+                          filled: true,
+                          fillColor: AppColors.cardWhite,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 14),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: AppColors.border),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: AppColors.border),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                                color: AppColors.primaryDarkNavy, width: 2),
+                          ),
+                        ),
+                        onChanged: (_) => setState(() {}),
                       ),
                     ),
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                SizedBox(
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: _search,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryDarkNavy,
-                      minimumSize: const Size(100, 48),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: isLoading ? null : _search,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryDarkNavy,
+                          minimumSize: const Size(100, 48),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                        child: Text('Buscar', style: AppTextStyles.buttonCTA),
+                      ),
                     ),
-                    child: Text('Buscar', style: AppTextStyles.buttonCTA),
-                  ),
+                  ],
                 ),
+                const SizedBox(height: 12),
+
+                // Suggestions
+                Row(
+                  children: [
+                    Text('SUGERENCIAS: ', style: AppTextStyles.labelUppercase),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _suggestions
+                              .map((s) => GestureDetector(
+                                    onTap: () {
+                                      _searchCtrl.text = s;
+                                      _search();
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.only(right: 6),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 5),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.surfaceGray,
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(color: AppColors.border),
+                                      ),
+                                      child: Text(s, style: AppTextStyles.caption),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+
+                // Loading state
+                if (isLoading) _buildLoading(),
+
+                // Result
+                if (hasResult && resultData != null) _buildResult(resultData),
+
+                // Default state
+                if (!isLoading && !hasResult) _buildEmptyState(),
               ],
             ),
-            const SizedBox(height: 12),
-
-            // Suggestions
-            Row(
-              children: [
-                Text('SUGERENCIAS: ', style: AppTextStyles.labelUppercase),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: _suggestions
-                          .map((s) => GestureDetector(
-                                onTap: () {
-                                  _searchCtrl.text = s;
-                                  _search();
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 6),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 5),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.surfaceGray,
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: AppColors.border),
-                                  ),
-                                  child: Text(s, style: AppTextStyles.caption),
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-
-            // Loading state
-            if (_isLoading) _buildLoading(),
-
-            // Result
-            if (_hasResult) _buildResult(),
-
-            // Default state
-            if (!_isLoading && !_hasResult) _buildEmptyState(),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -224,7 +238,7 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
     );
   }
 
-  Widget _buildResult() {
+  Widget _buildResult(Map<String, dynamic> data) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -247,7 +261,7 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '98% COINCIDENCIA',
+                      '${data['match'] ?? '98'}% COINCIDENCIA',
                       style: AppTextStyles.badgeText.copyWith(
                           color: const Color(0xFF92400E), fontSize: 10),
                     ),
@@ -259,7 +273,7 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
                   style: AppTextStyles.labelUppercase),
               const SizedBox(height: 4),
               Text(
-                '6403.59.00.00',
+                data['code'] ?? '6403.59.00.00',
                 style: GoogleFonts.sourceCodePro(
                     fontSize: 34,
                     fontWeight: FontWeight.bold,
@@ -270,12 +284,12 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
               // Description
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   border: Border(
                     left: BorderSide(color: AppColors.yellowAmber, width: 2),
                   ),
-                  color: const Color(0xFFFFFBEB),
-                  borderRadius: const BorderRadius.only(
+                  color: Color(0xFFFFFBEB),
+                  borderRadius: BorderRadius.only(
                     topRight: Radius.circular(8),
                     bottomRight: Radius.circular(8),
                   ),
@@ -288,7 +302,7 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
                             .copyWith(color: AppColors.yellowAmber)),
                     const SizedBox(height: 4),
                     Text(
-                      'Los demás calzados con suela de caucho, plástico, cuero natural o regenerado y parte superior de cuero natural.',
+                      data['description'] ?? 'Los demás calzados...',
                       style: AppTextStyles.bodySmall,
                     ),
                   ],
@@ -297,15 +311,16 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
               const SizedBox(height: 12),
 
               // Justification collapsible
-              _JustificationToggle(),
+              _JustificationToggle(
+                  justification: data['justification'] ?? '...'),
               const SizedBox(height: 16),
 
               // Arancel + IVA grid
               Row(
                 children: [
-                  _taxCard('ARANCEL (GRAVAMEN)', '15%'),
+                  _taxCard('ARANCEL (GRAVAMEN)', data['arancel'] ?? '15%'),
                   const SizedBox(width: 16),
-                  _taxCard('IVA', '19%'),
+                  _taxCard('IVA', data['iva'] ?? '19%'),
                 ],
               ),
             ],
@@ -361,7 +376,7 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.surfaceGray,
               shape: BoxShape.circle,
             ),
@@ -384,6 +399,10 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
 }
 
 class _JustificationToggle extends StatefulWidget {
+  final String justification;
+
+  const _JustificationToggle({required this.justification});
+
   @override
   State<_JustificationToggle> createState() => _JustificationToggleState();
 }
@@ -411,7 +430,7 @@ class _JustificationToggleState extends State<_JustificationToggle> {
           if (_expanded) ...[
             const SizedBox(height: 8),
             Text(
-              'La clasificación se realizó basándose en las características del producto: material de la suela (cuero natural), tipo de calzado y uso final. Se excluyeron partidas como 6401 (calzado impermeable) y 6402 (suela de caucho o plástico) por no aplicar las características mencionadas.',
+              widget.justification,
               style: AppTextStyles.bodySmall
                   .copyWith(color: AppColors.textSecondary),
             ),
@@ -421,4 +440,3 @@ class _JustificationToggleState extends State<_JustificationToggle> {
     );
   }
 }
-

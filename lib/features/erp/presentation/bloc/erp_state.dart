@@ -26,3 +26,16 @@ class ErpError extends ErpState {
   @override
   List<Object> get props => [message];
 }
+
+class ErpSyncing extends ErpState {}
+
+class ErpSyncSuccess extends ErpState {}
+
+class ErpSyncError extends ErpState {
+  final String message;
+
+  const ErpSyncError({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}

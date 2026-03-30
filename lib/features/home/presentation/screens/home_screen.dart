@@ -6,6 +6,7 @@ import '../bloc/home_bloc.dart';
 import '../widgets/dashboard_tab.dart';
 import '../widgets/operations_tab.dart';
 import '../widgets/tools_tab.dart';
+import '../widgets/documents_tab.dart';
 import '../widgets/profile_tab.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -33,6 +34,7 @@ class _HomeView extends StatelessWidget {
               DashboardTab(),
               OperationsTab(),
               ToolsTab(),
+              DocumentsTab(),
               ProfileTab(),
             ],
           ),
@@ -49,6 +51,7 @@ class _HomeView extends StatelessWidget {
       (Icons.home_rounded, Icons.home_outlined, 'INICIO'),
       (Icons.anchor_rounded, Icons.anchor_outlined, 'OPERACIONES'),
       (Icons.build_rounded, Icons.build_outlined, 'HERRAMIENTAS'),
+      (Icons.folder_rounded, Icons.folder_outlined, 'DOCUMENTOS'),
       (Icons.person_rounded, Icons.person_outline_rounded, 'PERFIL'),
     ];
 
