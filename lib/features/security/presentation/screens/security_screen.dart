@@ -315,9 +315,14 @@ class _SecurityView extends StatelessWidget {
   // ── Dialogs ──────────────────────────────────────────────────────────────
 
   static void _showChangePasswordSheet(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
     final currentCtrl = TextEditingController();
     final newCtrl = TextEditingController();
     final confirmCtrl = TextEditingController();
+    // Must live outside the builder to persist across rebuilds
+    bool obscureCurrent = true;
+    bool obscureNew = true;
+    bool obscureConfirm = true;
 
     showModalBottomSheet(
       context: context,
@@ -325,9 +330,6 @@ class _SecurityView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => StatefulBuilder(
         builder: (ctx, setModal) {
-          bool obscureCurrent = true;
-          bool obscureNew = true;
-          bool obscureConfirm = true;
           return Padding(
             padding:
                 EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
@@ -337,82 +339,102 @@ class _SecurityView extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: AppColors.border,
-                        borderRadius: BorderRadius.circular(2),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppColors.border,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text('Cambiar Contraseña',
-                      style: GoogleFonts.inter(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      )),
-                  const SizedBox(height: 6),
-                  Text('Usa al menos 8 caracteres con letras y números.',
-                      style: AppTextStyles.caption),
-                  const SizedBox(height: 24),
-                  _passwordField(
-                    controller: currentCtrl,
-                    label: 'Contraseña actual',
-                    obscure: obscureCurrent,
-                    onToggle: () =>
-                        setModal(() => obscureCurrent = !obscureCurrent),
-                  ),
-                  const SizedBox(height: 14),
-                  _passwordField(
-                    controller: newCtrl,
-                    label: 'Nueva contraseña',
-                    obscure: obscureNew,
-                    onToggle: () => setModal(() => obscureNew = !obscureNew),
-                  ),
-                  const SizedBox(height: 14),
-                  _passwordField(
-                    controller: confirmCtrl,
-                    label: 'Confirmar nueva contraseña',
-                    obscure: obscureConfirm,
-                    onToggle: () =>
-                        setModal(() => obscureConfirm = !obscureConfirm),
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text('✅ Contraseña actualizada correctamente'),
-                            backgroundColor: AppColors.successGreen,
-                          ),
-                        );
+                    const SizedBox(height: 20),
+                    Text('Cambiar Contraseña',
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        )),
+                    const SizedBox(height: 6),
+                    Text('Usa al menos 8 caracteres con letras y números.',
+                        style: AppTextStyles.caption),
+                    const SizedBox(height: 24),
+                    _passwordField(
+                      controller: currentCtrl,
+                      label: 'Contraseña actual',
+                      obscure: obscureCurrent,
+                      onToggle: () =>
+                          setModal(() => obscureCurrent = !obscureCurrent),
+                      validator: (v) => (v == null || v.isEmpty)
+                          ? 'Ingresa tu contraseña actual'
+                          : null,
+                    ),
+                    const SizedBox(height: 14),
+                    _passwordField(
+                      controller: newCtrl,
+                      label: 'Nueva contraseña',
+                      obscure: obscureNew,
+                      onToggle: () =>
+                          setModal(() => obscureNew = !obscureNew),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Campo requerido';
+                        if (v.length < 8) return 'Mínimo 8 caracteres';
+                        return null;
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryDarkNavy,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: Text('Guardar cambios',
-                          style: GoogleFonts.inter(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          )),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 14),
+                    _passwordField(
+                      controller: confirmCtrl,
+                      label: 'Confirmar nueva contraseña',
+                      obscure: obscureConfirm,
+                      onToggle: () =>
+                          setModal(() => obscureConfirm = !obscureConfirm),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Campo requerido';
+                        if (v != newCtrl.text) {
+                          return 'Las contraseñas no coinciden';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (!formKey.currentState!.validate()) return;
+                          Navigator.pop(ctx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('✅ Contraseña actualizada correctamente'),
+                              backgroundColor: AppColors.successGreen,
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryDarkNavy,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text('Guardar cambios',
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            )),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -426,10 +448,12 @@ class _SecurityView extends StatelessWidget {
     required String label,
     required bool obscure,
     required VoidCallback onToggle,
+    String? Function(String?)? validator,
   }) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       obscureText: obscure,
+      validator: validator,
       style: GoogleFonts.inter(fontSize: 14, color: AppColors.textPrimary),
       decoration: InputDecoration(
         labelText: label,

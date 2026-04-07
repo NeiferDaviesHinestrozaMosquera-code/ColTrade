@@ -1,23 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../../injection/injection.dart';
-import '../../../assistant/presentation/bloc/assistant_bloc.dart';
-import '../../../assistant/presentation/screens/export_assistant_screen.dart';
-import '../../../assistant/presentation/screens/import_assistant_screen.dart';
-import '../../../assistant/presentation/screens/nandina_classifier_screen.dart';
-import '../../../profile/presentation/screens/company_info_screen.dart';
-import '../../../profile/presentation/screens/notifications_screen.dart';
-import '../../../profile/presentation/screens/notification_settings_screen.dart';
-import '../../../profile/presentation/screens/my_tickets_screen.dart';
-import '../../../profile/presentation/screens/tutorials_screen.dart';
-import '../../../profile/presentation/screens/support_screen.dart';
-import '../../../erp/presentation/screens/api_erp_screen.dart';
-import '../../../logistics/presentation/screens/logistics_screen.dart';
-import '../../../history/presentation/screens/history_screen.dart';
-import '../../../repository/presentation/screens/repository_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class OperationsTab extends StatelessWidget {
   const OperationsTab({super.key});
@@ -37,13 +22,7 @@ class OperationsTab extends StatelessWidget {
             title: 'Clasificador NANDINA',
             subtitle: 'Paso previo: Clasifica tu producto con IA',
             gradientColors: const [Color(0xFF8B5CF6), Color(0xFF6D28D9)],
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => BlocProvider(
-                          create: (_) => sl<AssistantBloc>(),
-                          child: const NandinaClassifierScreen(),
-                        ))),
+            onTap: () => context.push('/nandina-classifier'),
           ),
           const SizedBox(height: 16),
           _operationTile(
@@ -51,10 +30,7 @@ class OperationsTab extends StatelessWidget {
             title: 'Nueva Exportación',
             subtitle: 'Iniciar proceso de exportación',
             gradientColors: const [Color(0xFF10B981), Color(0xFF047857)],
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const ExportAssistantScreen())),
+            onTap: () => context.push('/export-assistant'),
           ),
           const SizedBox(height: 16),
           _operationTile(
@@ -62,10 +38,7 @@ class OperationsTab extends StatelessWidget {
             title: 'Nueva Importación',
             subtitle: 'Iniciar proceso de importación',
             gradientColors: const [Color(0xFF3B82F6), Color(0xFF1D4ED8)],
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const ImportAssistantScreen())),
+            onTap: () => context.push('/import-assistant'),
           ),
         ],
       ),

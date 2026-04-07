@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
+import '../../../../injection/injection.dart';
+import '../../../../core/utils/auth_notifier.dart';
 import '../bloc/auth/auth_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -38,42 +40,39 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AuthBloc(),
-      child: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message,
-                    style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
-                backgroundColor: AppColors.errorRed,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                margin: const EdgeInsets.all(16),
-              ),
-            );
-          }
-          if (state is AuthSuccess) {
-            // Navigate to home on successful login
-            context.go('/home');
-          }
-        },
-        builder: (context, state) {
-          final isLoading = state is AuthLoading;
-          return _LoginBody(
-            formKey: _formKey,
-            emailController: _emailController,
-            passwordController: _passwordController,
-            obscurePassword: _obscurePassword,
-            isLoading: isLoading,
-            onToggleObscure: () =>
-                setState(() => _obscurePassword = !_obscurePassword),
-            onLogin: () => _onLogin(context),
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message,
+                  style: GoogleFonts.inter(fontSize: 14, color: Colors.white)),
+              backgroundColor: AppColors.errorRed,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              margin: const EdgeInsets.all(16),
+            ),
           );
-        },
-      ),
+        }
+        if (state is AuthSuccess) {
+          sl<AuthNotifier>().login();
+          context.go('/home');
+        }
+      },
+      builder: (context, state) {
+        final isLoading = state is AuthLoading;
+        return _LoginBody(
+          formKey: _formKey,
+          emailController: _emailController,
+          passwordController: _passwordController,
+          obscurePassword: _obscurePassword,
+          isLoading: isLoading,
+          onToggleObscure: () =>
+              setState(() => _obscurePassword = !_obscurePassword),
+          onLogin: () => _onLogin(context),
+        );
+      },
     );
   }
 }

@@ -3,19 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../injection/injection.dart';
-import '../../../profile/presentation/bloc/profile_bloc.dart';
-import '../../../erp/presentation/bloc/erp_bloc.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../security/presentation/screens/security_screen.dart';
-import '../../../academy/presentation/screens/knowledge_center_screen.dart';
-import '../../../profile/presentation/screens/personal_info_screen.dart';
-import '../../../profile/presentation/screens/company_info_screen.dart';
-import '../../../profile/presentation/screens/notification_settings_screen.dart';
-import '../../../profile/presentation/screens/my_tickets_screen.dart';
-import '../../../profile/presentation/screens/tutorials_screen.dart';
-import '../../../profile/presentation/screens/support_screen.dart';
-import '../../../erp/presentation/screens/api_erp_screen.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -97,73 +85,44 @@ class ProfileTab extends StatelessWidget {
               Icons.person_outline,
               'Información Personal',
               'Datos de tu perfil',
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const PersonalInfoScreen())),
+              onTap: () => context.push('/personal-info'),
             ),
             _profileItem(
               Icons.business_outlined,
               'Empresa',
               'TechCorp Solutions',
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => BlocProvider(
-                            create: (_) => sl<ProfileBloc>(),
-                            child: const CompanyInfoScreen(),
-                          ))),
+              onTap: () => context.push('/company-info'),
             ),
             _profileItem(
               Icons.security_outlined,
               'Seguridad',
               'Contraseña y 2FA',
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const SecurityScreen())),
+              onTap: () => context.push('/security'),
             ),
             _profileItem(Icons.notifications_outlined, 'Notificaciones',
                 'Alertas y frecuencia',
                 badge: 'ENT',
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const NotificationSettingsScreen()))),
+                onTap: () => context.push('/notification-settings')),
             _profileItem(Icons.api_outlined, 'API / ERP', 'Sincronización SAP',
                 badge: 'ENT',
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => BlocProvider(
-                              create: (_) => sl<ErpBloc>(),
-                              child: const ApiErpScreen(),
-                            )))),
+                onTap: () => context.push('/api-erp')),
           ]),
           const SizedBox(height: 16),
           _profileSection('CENTRO DE AYUDA', [
             _profileItem(Icons.confirmation_number_outlined, 'Mis Tickets',
                 'Soporte activo',
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const MyTicketsScreen()))),
+                onTap: () => context.push('/my-tickets')),
             _profileItem(
                 Icons.school_outlined, 'Academia', 'Cursos y aprendizaje',
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const KnowledgeCenterScreen()))),
+                onTap: () => context.push('/knowledge-center')),
             _profileItem(
                 Icons.play_circle_outline, 'Tutoriales', 'Videos de ayuda',
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const TutorialsScreen()))),
+                onTap: () => context.push('/tutorials')),
           ]),
           const SizedBox(height: 16),
           CTAButton(
               label: '💬  Contactar Soporte',
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (_) => const SupportScreen()))),
+              onTap: () => context.push('/support')),
         ],
       ),
     );
@@ -275,7 +234,7 @@ class ProfileTab extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             ElevatedButton(
-              onPressed: () => context.go('/home'),
+              onPressed: () => context.push('/subscription-plans'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white.withValues(alpha: 0.15),
                 foregroundColor: Colors.white,
@@ -343,7 +302,7 @@ class ProfileTab extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           ElevatedButton(
-            onPressed: () => context.go('/home'),
+            onPressed: () => context.push('/subscription-plans'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: const Color(0xFFD97706),

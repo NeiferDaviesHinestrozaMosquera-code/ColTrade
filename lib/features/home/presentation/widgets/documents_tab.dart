@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../checklist/presentation/screens/checklist_screen.dart';
-import '../../../repository/presentation/screens/repository_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class DocumentsTab extends StatelessWidget {
   const DocumentsTab({super.key});
@@ -39,7 +38,7 @@ class DocumentsTab extends StatelessWidget {
             'Documentos Pendientes por Carga',
             '12 Pendientes',
             Colors.orange,
-            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChecklistScreen())),
+            () => context.push('/checklist'),
           ),
           const SizedBox(height: 16),
           _buildDocCard(
@@ -49,7 +48,7 @@ class DocumentsTab extends StatelessWidget {
             'Archivo Legal y Expedientes',
             '4,520 Archivos',
             AppColors.successGreen,
-            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RepositoryScreen())),
+            () => context.push('/repository'),
           ),
         ],
       ),

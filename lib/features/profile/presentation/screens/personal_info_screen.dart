@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 
@@ -54,7 +55,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               leading: const Icon(Icons.camera_alt_rounded),
               title: const Text('Tomar foto'),
               onTap: () {
-                Navigator.pop(context);
+                context.pop();
                 _pickImage(ImageSource.camera);
               },
             ),
@@ -62,7 +63,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               leading: const Icon(Icons.photo_library_rounded),
               title: const Text('Seleccionar de la galería'),
               onTap: () {
-                Navigator.pop(context);
+                context.pop();
                 _pickImage(ImageSource.gallery);
               },
             ),
@@ -350,7 +351,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             CTAButton(
               label: 'Cancelar',
               outlined: true,
-              onTap: () => Navigator.pop(context),
+              onTap: () => context.pop(),
             ),
             const SizedBox(height: 30),
           ],

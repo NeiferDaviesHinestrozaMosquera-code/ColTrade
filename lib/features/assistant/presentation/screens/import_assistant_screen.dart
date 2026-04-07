@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 //import 'calculator_screen.dart';
@@ -31,7 +32,7 @@ class _ImportAssistantScreenState extends State<ImportAssistantScreen> {
             if (_currentStep > 1) {
               setState(() => _currentStep--);
             } else {
-              Navigator.pop(context);
+              context.pop();
             }
           },
         ),
@@ -511,7 +512,7 @@ class _ImportAssistantScreenState extends State<ImportAssistantScreen> {
               if (_currentStep < 4)
                 setState(() => _currentStep++);
               else
-                Navigator.pop(context);
+                context.pop();
             },
           ),
           const SizedBox(height: 8),

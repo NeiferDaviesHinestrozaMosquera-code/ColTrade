@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../../../academy/presentation/screens/lesson_player_screen.dart';
@@ -213,10 +214,7 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
   Widget _buildFeaturedBanner(BuildContext context) {
     final featured = _all[1]; // "Proceso de importación..."
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const LessonPlayerScreen()),
-      ),
+      onTap: () => context.push('/lesson-player'),
       child: Container(
         height: 160,
         decoration: BoxDecoration(
@@ -306,10 +304,7 @@ class _TutorialsScreenState extends State<TutorialsScreen> {
 
   Widget _buildVideoCard(BuildContext context, _Tutorial tutorial) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const LessonPlayerScreen()),
-      ),
+      onTap: () => context.push('/lesson-player'),
       child: Container(
         decoration: AppDecorations.card,
         child: Column(

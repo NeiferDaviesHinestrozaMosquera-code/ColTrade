@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import 'my_tickets_screen.dart';
@@ -58,10 +59,7 @@ class SupportScreen extends StatelessWidget {
           // ── CTA ──────────────────────────────────────────────────────────
           CTAButton(
             label: '🎫  Abrir Ticket',
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const MyTicketsScreen()),
-            ),
+            onTap: () => context.push('/my-tickets'),
           ),
           const SizedBox(height: 8),
         ],

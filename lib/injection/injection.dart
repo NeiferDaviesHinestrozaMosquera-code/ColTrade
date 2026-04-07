@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import '../core/utils/auth_notifier.dart';
 import '../features/alerts/data/repositories/alerts_repository_impl.dart';
 import '../features/alerts/domain/repositories/alerts_repository.dart';
 import '../features/alerts/domain/usecases/get_alerts_usecase.dart';
@@ -38,6 +39,9 @@ import '../features/assistant/presentation/bloc/assistant_bloc.dart';
 final GetIt sl = GetIt.instance;
 
 void setupDependencies() {
+  // ── Auth State ──────────────────────────────────────────────────────
+  sl.registerLazySingleton(() => AuthNotifier());
+
   // ── Repositories ──────────────────────────────────────────────────────
   sl.registerLazySingleton<AlertsRepository>(
     () => AlertsRepositoryImpl(),

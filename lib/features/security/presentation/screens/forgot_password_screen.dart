@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/auth/auth_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -24,6 +25,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   bool _obscureNew = true;
   bool _obscureConfirm = true;
+
+  // Track current step locally so AuthLoading / AuthFailure don't reset view
+  int _step = 0; // 0 = email, 1 = otp, 2 = new password
+  String _maskedEmail = '';
 
   // Resend countdown
   int _resendSeconds = 0;
@@ -71,7 +76,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthFailure) _showError(state.message);
-        if (state is OtpSent) _startResendTimer();
+        if (state is OtpSent && state.flowType == OtpFlowType.forgotPassword) {
+          setState(() {
+            _step = 1;
+            _maskedEmail = state.maskedEmail;
+          });
+          _startResendTimer();
+        }
+        if (state is PasswordResetReady) {
+          setState(() => _step = 2);
+        }
         if (state is PasswordResetSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -85,10 +99,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               margin: const EdgeInsets.all(16),
             ),
           );
-          Navigator.popUntil(context, (r) => r.isFirst);
+          context.go('/login');
         }
       },
       builder: (context, state) {
+        final isLoading = state is AuthLoading;
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: const ColTradeAppBar(
@@ -110,7 +125,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: child,
                   ),
                 ),
-                child: _buildStep(context, state),
+                child: _buildStep(context, isLoading),
               ),
             ),
           ),
@@ -119,64 +134,60 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  Widget _buildStep(BuildContext context, AuthState state) {
-    if (state is OtpSent && state.flowType == OtpFlowType.forgotPassword) {
-      return _OtpStep(
-        key: const ValueKey('otp'),
-        maskedEmail: state.maskedEmail,
-        controllers: _otpControllers,
-        focuses: _otpFocuses,
-        resendSeconds: _resendSeconds,
-        isLoading: false,
-        onVerify: () {
-          final otp = _otpControllers.map((c) => c.text).join();
-          context.read<AuthBloc>().add(OtpVerified(
-              otp: otp, flowType: OtpFlowType.forgotPassword));
-        },
-        onResend: _resendSeconds == 0
-            ? () {
-                context.read<AuthBloc>().add(
-                    ForgotPasswordRequested(email: _emailController.text.trim()));
-              }
-            : null,
-      );
+  Widget _buildStep(BuildContext context, bool isLoading) {
+    switch (_step) {
+      case 1:
+        return _OtpStep(
+          key: const ValueKey('otp'),
+          maskedEmail: _maskedEmail,
+          controllers: _otpControllers,
+          focuses: _otpFocuses,
+          resendSeconds: _resendSeconds,
+          isLoading: isLoading,
+          onVerify: () {
+            final otp = _otpControllers.map((c) => c.text).join();
+            context.read<AuthBloc>().add(OtpVerified(
+                otp: otp, flowType: OtpFlowType.forgotPassword));
+          },
+          onResend: _resendSeconds == 0
+              ? () {
+                  context.read<AuthBloc>().add(
+                      ForgotPasswordRequested(email: _emailController.text.trim()));
+                }
+              : null,
+        );
+      case 2:
+        return _NewPasswordStep(
+          key: const ValueKey('newpass'),
+          formKey: _newPassFormKey,
+          newPassController: _newPassController,
+          confirmPassController: _confirmPassController,
+          obscureNew: _obscureNew,
+          obscureConfirm: _obscureConfirm,
+          onToggleNew: () => setState(() => _obscureNew = !_obscureNew),
+          onToggleConfirm: () => setState(() => _obscureConfirm = !_obscureConfirm),
+          isLoading: isLoading,
+          onSubmit: () {
+            if (!_newPassFormKey.currentState!.validate()) return;
+            context.read<AuthBloc>().add(NewPasswordSubmitted(
+                  password: _newPassController.text,
+                  confirmPassword: _confirmPassController.text,
+                ));
+          },
+        );
+      default:
+        return _EmailStep(
+          key: const ValueKey('email'),
+          formKey: _emailFormKey,
+          emailController: _emailController,
+          isLoading: isLoading,
+          onSubmit: () {
+            if (!_emailFormKey.currentState!.validate()) return;
+            context.read<AuthBloc>().add(
+                ForgotPasswordRequested(email: _emailController.text.trim()));
+          },
+        );
     }
-
-    if (state is PasswordResetReady) {
-      return _NewPasswordStep(
-        key: const ValueKey('newpass'),
-        formKey: _newPassFormKey,
-        newPassController: _newPassController,
-        confirmPassController: _confirmPassController,
-        obscureNew: _obscureNew,
-        obscureConfirm: _obscureConfirm,
-        onToggleNew: () => setState(() => _obscureNew = !_obscureNew),
-        onToggleConfirm: () => setState(() => _obscureConfirm = !_obscureConfirm),
-        isLoading: false,
-        onSubmit: () {
-          if (!_newPassFormKey.currentState!.validate()) return;
-          context.read<AuthBloc>().add(NewPasswordSubmitted(
-                password: _newPassController.text,
-                confirmPassword: _confirmPassController.text,
-              ));
-        },
-      );
-    }
-
-    // Loading overlay while on email step
-    final isLoading = state is AuthLoading;
-
-    return _EmailStep(
-      key: const ValueKey('email'),
-      formKey: _emailFormKey,
-      emailController: _emailController,
-      isLoading: isLoading,
-      onSubmit: () {
-        if (!_emailFormKey.currentState!.validate()) return;
-        context.read<AuthBloc>().add(
-            ForgotPasswordRequested(email: _emailController.text.trim()));
-      },
-    );
   }
 }
 

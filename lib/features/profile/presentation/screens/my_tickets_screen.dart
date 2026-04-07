@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 
@@ -39,11 +40,16 @@ class _TicketEvent {
 }
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
-class MyTicketsScreen extends StatelessWidget {
+class MyTicketsScreen extends StatefulWidget {
   const MyTicketsScreen({super.key});
 
-  static const List<_Ticket> _tickets = [
-    _Ticket(
+  @override
+  State<MyTicketsScreen> createState() => _MyTicketsScreenState();
+}
+
+class _MyTicketsScreenState extends State<MyTicketsScreen> {
+  final List<_Ticket> _tickets = [
+    const _Ticket(
       id: 'TKT-0042',
       title: 'Error en cálculo de aranceles',
       description:
@@ -69,7 +75,7 @@ class MyTicketsScreen extends StatelessWidget {
             timelineStatus: TimelineStatus.pending),
       ],
     ),
-    _Ticket(
+    const _Ticket(
       id: 'TKT-0039',
       title: 'Incorporar agente de Buenaventura',
       description:
@@ -92,7 +98,7 @@ class MyTicketsScreen extends StatelessWidget {
             timelineStatus: TimelineStatus.pending),
       ],
     ),
-    _Ticket(
+    const _Ticket(
       id: 'TKT-0031',
       title: 'Generación de certificado de origen',
       description:
@@ -145,6 +151,54 @@ class MyTicketsScreen extends StatelessWidget {
     );
   }
 
+  void _showCreateTicket() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: _CreateTicketSheet(
+          onSubmit: (title, description) {
+            setState(() {
+              final newId = 'TKT-00${_tickets.length + 43}';
+              final now = DateTime.now();
+              const months = [
+                'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+              ];
+              final dateStr = '${now.day.toString().padLeft(2, '0')} ${months[now.month - 1]} ${now.year}';
+              final timeStr = '${now.day.toString().padLeft(2, '0')} ${months[now.month - 1]} · ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+              _tickets.insert(
+                0,
+                _Ticket(
+                  id: newId,
+                  title: title,
+                  description: description,
+                  date: dateStr,
+                  status: _TicketStatus.abierto,
+                  timeline: [
+                    _TicketEvent(
+                      title: 'Ticket creado',
+                      timestamp: timeStr,
+                      timelineStatus: TimelineStatus.completed,
+                    ),
+                    const _TicketEvent(
+                      title: 'En cola de asignación',
+                      timelineStatus: TimelineStatus.active,
+                    ),
+                  ],
+                ),
+              );
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,12 +244,7 @@ class MyTicketsScreen extends StatelessWidget {
             bottom: 24,
             child: CTAButton(
               label: '➕  Nuevo Ticket',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Función próximamente disponible')),
-                );
-              },
+              onTap: _showCreateTicket,
             ),
           ),
         ],
@@ -369,3 +418,115 @@ class _TicketDetailSheet extends StatelessWidget {
   }
 }
 
+// ─── Create Ticket Form Sheet ────────────────────────────────────────────────
+class _CreateTicketSheet extends StatefulWidget {
+  final void Function(String title, String description) onSubmit;
+
+  const _CreateTicketSheet({required this.onSubmit});
+
+  @override
+  State<_CreateTicketSheet> createState() => _CreateTicketSheetState();
+}
+
+class _CreateTicketSheetState extends State<_CreateTicketSheet> {
+  final _formKey = GlobalKey<FormState>();
+  String _title = '';
+  String _description = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(
+        color: AppColors.cardWhite,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 24),
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            Text('Nuevo Ticket de Soporte',
+                style: GoogleFonts.inter(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary)),
+            const SizedBox(height: 8),
+            Text('Describe tu problema o solicitud con el mayor detalle posible.',
+                style: AppTextStyles.bodySmall),
+            const SizedBox(height: 24),
+            TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Asunto',
+                hintText: 'Ej. Error en cálculos aduaneros',
+                prefixIcon: Icon(Icons.title, color: AppColors.textSecondary),
+                border: OutlineInputBorder(),
+              ),
+              validator: (v) => v == null || v.trim().isEmpty ? 'Requerido' : null,
+              onSaved: (v) => _title = v ?? '',
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              maxLines: 4,
+              decoration: const InputDecoration(
+                labelText: 'Descripción',
+                hintText: 'Explica el escenario, ejemplos, qué intentabas hacer...',
+                alignLabelWithHint: true,
+                border: OutlineInputBorder(),
+              ),
+              validator: (v) => v == null || v.trim().length < 10
+                  ? 'Mínimo 10 caracteres'
+                  : null,
+              onSaved: (v) => _description = v ?? '',
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryDarkNavy,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    widget.onSubmit(_title, _description);
+                    context.pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('✅ Ticket creado exitosamente'),
+                        backgroundColor: AppColors.successGreen,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Enviar Ticket',
+                    style: GoogleFonts.inter(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

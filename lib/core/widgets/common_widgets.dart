@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
+import 'package:go_router/go_router.dart';
 
 // ─── Colombia Tricolor Bar ────────────────────────────────────────────────────
 class ColombiaTricolorBar extends StatelessWidget {
@@ -147,11 +148,11 @@ class ColTradeAppBar extends StatelessWidget implements PreferredSizeWidget {
               elevation: 0,
               centerTitle: !showLogo,
               leading: leading ??
-                  (Navigator.canPop(context)
+                  (context.canPop()
                       ? IconButton(
                           icon: Icon(Icons.arrow_back_ios_new_rounded,
                               size: 18, color: dark ? AppColors.accentOrange : AppColors.textPrimary),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () => context.pop(),
                         )
                       : null),
               title: showLogo

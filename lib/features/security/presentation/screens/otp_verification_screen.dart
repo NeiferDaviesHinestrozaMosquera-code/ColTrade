@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
+import '../../../../injection/injection.dart';
+import '../../../../core/utils/auth_notifier.dart';
 import '../bloc/auth/auth_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -114,6 +116,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
           _focusNodes[0].requestFocus();
         }
         if (state is AuthSuccess) {
+          sl<AuthNotifier>().login();
           context.go('/home');
         }
       },

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../../injection/injection.dart';
-import '../bloc/assistant_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/agent.dart';
-import 'agent_profile_screen.dart';
-import 'agent_contact_screen.dart';
 
 class AgentsScreen extends StatefulWidget {
   const AgentsScreen({super.key});
@@ -302,13 +298,7 @@ class _AgentsScreenState extends State<AgentsScreen> {
               Expanded(
                 flex: 6,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => BlocProvider(
-                                create: (_) => sl<AssistantBloc>(),
-                                child: AgentContactScreen(agent: agent),
-                              ))),
+                  onPressed: () => context.push('/agent-contact', extra: agent),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryDarkNavy,
                     shape: RoundedRectangleBorder(
@@ -324,10 +314,7 @@ class _AgentsScreenState extends State<AgentsScreen> {
               Expanded(
                 flex: 4,
                 child: OutlinedButton(
-                  onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => AgentProfileScreen(agent: agent))),
+                  onPressed: () => context.push('/agent-profile', extra: agent),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primaryDarkNavy,
                     side: const BorderSide(color: AppColors.border),

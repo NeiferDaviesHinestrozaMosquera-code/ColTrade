@@ -22,7 +22,7 @@ final _plans = <SubscriptionPlan>[
     accentColor: Color(0xFF6B7280),
     features: [
       'Consultas arancelarias básicas',
-      'Calculadora de costos (5/mes)',
+      'Calculadora de costos (3/mes)',
       'Noticias y alertas generales',
       'Clasificador NANDINA básico',
       'Soporte por email',
@@ -46,7 +46,7 @@ final _plans = <SubscriptionPlan>[
       'Alertas TLC personalizadas',
       'Clasificador NANDINA con IA',
       'Centro de conocimiento completo',
-      'Repositorio de documentos (5 GB)',
+      'Repositorio de documentos (1 GB)',
       'Soporte prioritario por chat',
     ],
   ),
@@ -156,8 +156,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
     }
   }
 
-  String _tierQueries(PlanTier tier) =>
-      tier == PlanTier.free ? '5/mes' : '∞';
+  String _tierQueries(PlanTier tier) => tier == PlanTier.free ? '5/mes' : '∞';
 
   // ── Build ──────────────────────────────────────────────────────────────────
 
@@ -172,11 +171,11 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
           icon: const Icon(Icons.arrow_back_ios_new_rounded,
               size: 18, color: AppColors.accentOrange),
           onPressed: () {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
+            if (context.canPop()) {
+              context.pop();
             } else {
               // fallback if using GoRouter without history
-              GoRouter.of(context).go('/profile'); 
+              GoRouter.of(context).go('/profile');
             }
           },
         ),
@@ -220,11 +219,9 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
             );
           }
 
-          final activeTier = (state is SubscriptionLoaded)
-              ? state.activeTier
-              : PlanTier.free;
-          final isChanging =
-              (state is SubscriptionLoaded) && state.isChanging;
+          final activeTier =
+              (state is SubscriptionLoaded) ? state.activeTier : PlanTier.free;
+          final isChanging = (state is SubscriptionLoaded) && state.isChanging;
 
           return FadeTransition(
             opacity: _fadeIn,
@@ -237,8 +234,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
                     const SizedBox(height: 24),
                     Text('ELIGE TU PLAN', style: AppTextStyles.labelUppercase),
                     const SizedBox(height: 14),
-                    ..._plans.map((plan) =>
-                        _buildPlanCard(plan, activeTier, isChanging)),
+                    ..._plans.map(
+                        (plan) => _buildPlanCard(plan, activeTier, isChanging)),
                     const SizedBox(height: 16),
                     _buildComparisonNote(),
                     const SizedBox(height: 24),
@@ -300,8 +297,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
                   children: [
                     Text(
                       'Tu plan actual',
-                      style: AppTextStyles.caption
-                          .copyWith(color: Colors.white60),
+                      style:
+                          AppTextStyles.caption.copyWith(color: Colors.white60),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -570,8 +567,8 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
                                 height: 20,
                                 margin: const EdgeInsets.only(top: 1),
                                 decoration: BoxDecoration(
-                                  color: plan.accentColor
-                                      .withValues(alpha: 0.12),
+                                  color:
+                                      plan.accentColor.withValues(alpha: 0.12),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -607,8 +604,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
                     ? OutlinedButton(
                         onPressed: null,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                              color: AppColors.border, width: 1.5),
+                          side: BorderSide(color: AppColors.border, width: 1.5),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
@@ -744,7 +740,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => Navigator.pop(ctx),
+                      onPressed: () => ctx.pop(),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.textSecondary,
                         side: const BorderSide(color: AppColors.border),
@@ -761,7 +757,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(ctx);
+                        ctx.pop();
                         context
                             .read<SubscriptionBloc>()
                             .add(SubscriptionChangePlan(plan.tier));

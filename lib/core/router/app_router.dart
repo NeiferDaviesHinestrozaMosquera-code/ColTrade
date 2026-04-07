@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../injection/injection.dart';
+import '../../core/utils/auth_notifier.dart';
 
 // Home
 import '../../features/home/presentation/screens/home_screen.dart';
@@ -41,9 +42,39 @@ import '../../features/profile/presentation/screens/subscription_plans_screen.da
 // Subscription BLoC
 import '../../features/subscription/presentation/bloc/subscription_bloc.dart';
 
+// Missing Imports
+import '../../features/profile/presentation/screens/personal_info_screen.dart';
+import '../../features/profile/presentation/screens/company_info_screen.dart';
+import '../../features/profile/presentation/screens/my_tickets_screen.dart';
+import '../../features/profile/presentation/bloc/profile_bloc.dart';
+import '../../features/security/presentation/screens/security_screen.dart';
+import '../../features/repository/presentation/screens/repository_screen.dart';
+import '../../features/academy/presentation/screens/quiz_screen.dart';
+import '../../features/academy/presentation/screens/lesson_player_screen.dart';
+import '../../features/academy/presentation/screens/certificate_screen.dart';
+import '../../features/erp/presentation/screens/api_erp_screen.dart';
+import '../../features/erp/presentation/bloc/erp_bloc.dart';
+import '../../features/assistant/presentation/screens/nandina_classifier_screen.dart';
+import '../../features/assistant/presentation/bloc/assistant_bloc.dart';
+import '../../features/assistant/presentation/screens/agent_contact_screen.dart';
+
+final _authNotifier = sl<AuthNotifier>();
+
 final appRouter = GoRouter(
   initialLocation: '/home',
-  // TODO: Add redirect guard here using Security/Auth state once it's persistent
+  refreshListenable: _authNotifier,
+  redirect: (context, state) {
+    final isAuthenticated = _authNotifier.isAuthenticated;
+    final authRoutes = {'/login', '/register', '/otp', '/forgot-password'};
+    final isAuthRoute = authRoutes.contains(state.matchedLocation);
+
+    // Unauthenticated user trying to access protected route → go to login
+    if (!isAuthenticated && !isAuthRoute) return '/home';
+    // Authenticated user on an auth route → go to home
+    if (isAuthenticated && isAuthRoute) return '/home';
+    // No redirect needed
+    return null;
+  },
   routes: [
     // ── Security ─────────────────────────────────────────────────────────────
     GoRoute(
@@ -169,6 +200,66 @@ final appRouter = GoRouter(
         create: (_) => sl<SubscriptionBloc>(),
         child: const SubscriptionPlansScreen(),
       ),
+    ),
+    GoRoute(
+      path: '/personal-info',
+      builder: (context, state) => const PersonalInfoScreen(),
+    ),
+    GoRoute(
+      path: '/company-info',
+      builder: (context, state) => BlocProvider<ProfileBloc>(
+        create: (_) => sl<ProfileBloc>(),
+        child: const CompanyInfoScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/my-tickets',
+      builder: (context, state) => const MyTicketsScreen(),
+    ),
+    GoRoute(
+      path: '/security',
+      builder: (context, state) => const SecurityScreen(),
+    ),
+    GoRoute(
+      path: '/repository',
+      builder: (context, state) => const RepositoryScreen(),
+    ),
+    GoRoute(
+      path: '/quiz',
+      builder: (context, state) => const QuizScreen(),
+    ),
+    GoRoute(
+      path: '/quiz-results',
+      builder: (context, state) => const QuizResultsScreen(),
+    ),
+    GoRoute(
+      path: '/certificate',
+      builder: (context, state) => const CertificateScreen(),
+    ),
+    GoRoute(
+      path: '/lesson-player',
+      builder: (context, state) => const LessonPlayerScreen(),
+    ),
+    GoRoute(
+      path: '/api-erp',
+      builder: (context, state) => BlocProvider<ErpBloc>(
+        create: (_) => sl<ErpBloc>(),
+        child: const ApiErpScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/nandina-classifier',
+      builder: (context, state) => BlocProvider<AssistantBloc>(
+        create: (_) => sl<AssistantBloc>(),
+        child: const NandinaClassifierScreen(),
+      ),
+    ),
+    GoRoute(
+      path: '/agent-contact',
+      builder: (context, state) {
+        final agent = state.extra as Agent;
+        return AgentContactScreen(agent: agent);
+      },
     ),
   ],
 );

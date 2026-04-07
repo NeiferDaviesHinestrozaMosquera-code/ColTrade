@@ -3,18 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../checklist/presentation/screens/checklist_screen.dart';
-import '../../../calculator/presentation/screens/calculator_screen.dart';
-import '../../../assistant/presentation/screens/agents_screen.dart';
-import '../../../profile/presentation/screens/personal_info_screen.dart';
-import '../../../profile/presentation/screens/company_info_screen.dart';
-import '../../../profile/presentation/screens/notifications_screen.dart';
-import '../../../profile/presentation/screens/notification_settings_screen.dart';
-import '../../../profile/presentation/screens/my_tickets_screen.dart';
-import '../../../profile/presentation/screens/tutorials_screen.dart';
-import '../../../profile/presentation/screens/support_screen.dart';
-import '../../../erp/presentation/screens/api_erp_screen.dart';
-import '../../../logistics/presentation/screens/logistics_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class ToolsTab extends StatelessWidget {
   const ToolsTab({super.key});
@@ -47,8 +36,7 @@ class ToolsTab extends StatelessWidget {
         children: [
 
           GestureDetector(
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const CalculatorScreen())),
+            onTap: () => context.push('/calculator'),
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -114,14 +102,10 @@ class ToolsTab extends StatelessWidget {
               _toolCard(
                   Icons.people_outline_rounded, 'Agentes', 'Directorio de agentes',
                   const [Color(0xFFF59E0B), Color(0xFFD97706)], // Vibrant Orange/Amber
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const AgentsScreen()))),
+                  onTap: () => context.push('/agents')),
               _toolCard(Icons.map_outlined, 'Logística', 'Puertos y rutas',
                   const [Color(0xFF0EA5E9), Color(0xFF0284C7)], // Vibrant Light Blue
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const LogisticsScreen()))),
+                  onTap: () => context.push('/logistics')),
             ],
           ),
         ],

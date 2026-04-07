@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/profile_bloc.dart';
@@ -442,7 +443,7 @@ class _CompanyInfoScreenState extends State<CompanyInfoScreen> {
             CTAButton(
               label: 'Cancelar',
               outlined: true,
-              onTap: () => Navigator.pop(context),
+              onTap: () => context.pop(),
             ),
             const SizedBox(height: 30),
             ],

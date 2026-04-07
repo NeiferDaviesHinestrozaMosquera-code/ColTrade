@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 
@@ -263,8 +264,7 @@ class CertificateScreen extends StatelessWidget {
             const SizedBox(height: 10),
             CTAButton(
               label: 'Continuar aprendiendo →',
-              onTap: () =>
-                  Navigator.popUntil(context, (route) => route.isFirst),
+              onTap: () => context.go('/home'),
               backgroundColor: AppColors.accentOrange,
             ),
             const SizedBox(height: 30),

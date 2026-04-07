@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import 'quiz_screen.dart';
@@ -78,10 +79,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                   const SizedBox(height: 20),
                   CTAButton(
                     label: 'Completar Lección →',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const QuizScreen()),
-                    ),
+                    onTap: () => context.push('/quiz'),
                   ),
                 ],
               ),

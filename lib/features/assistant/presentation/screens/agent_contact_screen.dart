@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
@@ -62,7 +63,7 @@ class _AgentContactScreenState extends State<AgentContactScreen> {
                 backgroundColor: AppColors.successGreen,
               ),
             );
-            Navigator.pop(context);
+            context.pop();
           } else if (state is AssistantError) {
              ScaffoldMessenger.of(context).showSnackBar(
                SnackBar(

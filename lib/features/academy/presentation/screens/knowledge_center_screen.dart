@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import 'lesson_player_screen.dart';
@@ -37,47 +38,7 @@ class _KnowledgeCenterScreenState extends State<KnowledgeCenterScreen> {
       ),
       body: Column(
         children: [
-          // Tab bar
-          Container(
-            color: AppColors.primaryDarkNavy,
-            child: Row(
-              children: ['INICIO', 'CURSOS', 'WEBINARS', 'PERFIL']
-                  .asMap()
-                  .entries
-                  .map((e) {
-                final active = e.key == _selectedTab;
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _selectedTab = e.key),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: active
-                                ? AppColors.accentOrange
-                                : Colors.transparent,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        e.value,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: active
-                              ? AppColors.accentOrange
-                              : const Color(0xFF94A3B8),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+
 
           // Content
           Expanded(
@@ -120,10 +81,7 @@ class _KnowledgeCenterScreenState extends State<KnowledgeCenterScreen> {
   Widget _buildCurrentCourse() {
     final course = _courses.first;
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const LessonPlayerScreen()),
-      ),
+      onTap: () => context.push('/lesson-player'),
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(

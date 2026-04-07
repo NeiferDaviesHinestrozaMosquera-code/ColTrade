@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../checklist/presentation/screens/checklist_screen.dart';
-import '../../../profile/presentation/screens/notifications_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class DashboardTab extends StatelessWidget {
   const DashboardTab({super.key});
@@ -42,9 +41,7 @@ class DashboardTab extends StatelessWidget {
           actions: [
             IconButton(
               icon: const NotificationBell(hasNotification: true),
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(
-                      builder: (_) => const NotificationsScreen())),
+              onPressed: () => context.push('/notifications'),
             ),
           ],
         ),
@@ -90,10 +87,7 @@ class DashboardTab extends StatelessWidget {
                   progress: 0.25,
                   icon: Icons.memory_rounded,
                   iconColor: Colors.teal,
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const ChecklistScreen())),
+                  onTap: () => context.push('/checklist'),
                 ),
                 const SizedBox(height: 100),
               ],

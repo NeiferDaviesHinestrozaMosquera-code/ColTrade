@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import 'certificate_screen.dart';
@@ -38,7 +39,7 @@ class _QuizScreenState extends State<QuizScreen> {
         dark: true,
         leading: IconButton(
           icon: const Icon(Icons.close_rounded, size: 20, color: AppColors.accentOrange),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         title: 'Introducción al Comercio Exterior',
       ),
@@ -138,19 +139,12 @@ class _QuizScreenState extends State<QuizScreen> {
                 CTAButton(
                   label: 'Enviar Respuesta',
                   onTap: _selectedOption != null
-                      ? () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const QuizResultsScreen()))
+                      ? () => context.push('/quiz-results')
                       : null,
                 ),
                 const SizedBox(height: 8),
                 TextButton(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const QuizResultsScreen()),
-                  ),
+                  onPressed: () => context.push('/quiz-results'),
                   child: Text('Omitir por ahora',
                       style: AppTextStyles.caption
                           .copyWith(color: AppColors.textLabel)),
@@ -344,17 +338,13 @@ class QuizResultsScreen extends StatelessWidget {
               children: [
                 CTAButton(
                   label: 'Ver Certificado →',
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const CertificateScreen()),
-                  ),
+                  onTap: () => context.push('/certificate'),
                 ),
                 const SizedBox(height: 10),
                 CTAButton(
                   label: 'Repetir Quiz',
                   outlined: true,
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => context.pop(),
                 ),
               ],
             ),

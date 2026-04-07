@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
@@ -329,7 +330,7 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
         const SizedBox(height: 16),
         CTAButton(
           label: 'Confirmar y continuar →',
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
         ),
         const SizedBox(height: 10),
         Text(

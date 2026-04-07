@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/notifications_bloc.dart';
@@ -57,11 +58,11 @@ class _NotificationsView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: Row(
                   children: [
-                    if (Navigator.canPop(context))
+                    if (context.canPop())
                       IconButton(
                         icon: const Icon(Icons.arrow_back_ios_new_rounded,
                             color: AppColors.accentOrange, size: 18),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => context.pop(),
                       )
                     else
                       const SizedBox(width: 48),
