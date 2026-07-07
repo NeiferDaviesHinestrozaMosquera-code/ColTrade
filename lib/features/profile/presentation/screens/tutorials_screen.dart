@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../../academy/presentation/screens/lesson_player_screen.dart';
+
 
 // ─── Data Model ───────────────────────────────────────────────────────────────
 class _Tutorial {

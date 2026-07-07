@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import 'my_tickets_screen.dart';
+
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 class SupportScreen extends StatelessWidget {

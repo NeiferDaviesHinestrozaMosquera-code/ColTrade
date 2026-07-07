@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
+import '../../../../injection/injection.dart';
+import '../../../../core/services/document_scanner_service.dart';
 import '../bloc/checklist_bloc.dart';
 
 import '../widgets/checklist_header.dart';
@@ -102,6 +104,19 @@ class _ChecklistViewState extends State<_ChecklistView>
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final scanner = sl<DocumentScannerService>();
+          final images = await scanner.scanDocument();
+          if (images.isNotEmpty && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Documento escaneado y listo para adjuntar (${images.length} páginas)')),
+            );
+          }
+        },
+        backgroundColor: AppColors.accentOrange,
+        child: const Icon(Icons.document_scanner_rounded, color: Colors.white),
       ),
     );
   }

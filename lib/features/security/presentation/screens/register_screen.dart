@@ -348,7 +348,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 8),
 
                       // Info 2FA
-                      InfoCard(
+                      const InfoCard(
                         title: 'Verificación en 2 Pasos',
                         body:
                             'Al crear tu cuenta recibirás un código de verificación en tu correo para activar la autenticación en 2 pasos.',

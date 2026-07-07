@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import 'quiz_screen.dart';
+
 
 class LessonPlayerScreen extends StatefulWidget {
   const LessonPlayerScreen({super.key});
@@ -14,7 +14,7 @@ class LessonPlayerScreen extends StatefulWidget {
 
 class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
   bool _isPlaying = false;
-  int _currentLesson = 3;
+  final int _currentLesson = 3;
 
   final _lessons = [
     (false, 'Lección 1', 'Introducción a la logística'),
@@ -73,8 +73,7 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                   ..._lessons
                       .asMap()
                       .entries
-                      .map((e) => _buildLessonItem(e.key + 1, e.value))
-                      .toList(),
+                      .map((e) => _buildLessonItem(e.key + 1, e.value)),
 
                   const SizedBox(height: 20),
                   CTAButton(
@@ -148,12 +147,12 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                       Text('08:24',
                           style: GoogleFonts.robotoMono(
                               fontSize: 12, color: Colors.white)),
-                      Row(
+                      const Row(
                         children: [
-                          const Icon(Icons.settings_rounded,
+                          Icon(Icons.settings_rounded,
                               color: Colors.white54, size: 16),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.fullscreen_rounded,
+                          SizedBox(width: 8),
+                          Icon(Icons.fullscreen_rounded,
                               color: Colors.white54, size: 18),
                         ],
                       ),
@@ -164,11 +163,11 @@ class _LessonPlayerScreenState extends State<LessonPlayerScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                ClipRRect(
-                  child: LinearProgressIndicator(
+                const ClipRRect(
+                   child: LinearProgressIndicator(
                     value: 8.4 / 24.25,
                     backgroundColor: Colors.white24,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
+                    valueColor: AlwaysStoppedAnimation<Color>(
                         AppColors.colombiaYellow),
                     minHeight: 3,
                   ),

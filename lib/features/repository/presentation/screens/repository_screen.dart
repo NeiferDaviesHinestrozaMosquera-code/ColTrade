@@ -1,31 +1,24 @@
-import 'dart:math';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../data/datasources/repository_local_datasource.dart';
-import '../../data/repositories/document_repository_impl.dart';
 import '../../domain/entities/repo_document.dart';
-import '../../domain/usecases/document_usecases.dart';
 import '../bloc/repository_bloc.dart';
 import '../widgets/document_card.dart';
+
+import '../../../../injection/injection.dart';
 
 class RepositoryScreen extends StatelessWidget {
   const RepositoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final datasource = RepositoryLocalDatasource();
-    final repository = DocumentRepositoryImpl(datasource);
-
     return BlocProvider(
-      create: (_) => RepositoryBloc(
-        getDocuments: GetDocumentsUseCase(repository),
-        uploadDocument: UploadDocumentUseCase(repository),
-        deleteDocument: DeleteDocumentUseCase(repository),
-      )..add(const LoadDocuments()),
+      create: (_) => sl<RepositoryBloc>()..add(const LoadDocuments()),
       child: const _RepositoryView(),
     );
   }
@@ -157,8 +150,10 @@ class _RepositoryView extends StatelessWidget {
                                 return DocumentCard(
                                   document: doc,
                                   onDownload: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Descargando ${doc.name}...'))
+                                    showDialog(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      builder: (_) => DownloadProgressDialog(document: doc),
                                     );
                                   },
                                   onDelete: () {
@@ -259,7 +254,7 @@ class _RepositoryView extends StatelessWidget {
               const SizedBox(height: 16),
               Text('Subir Documento', style: GoogleFonts.inter(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              Text('Simula la carga de un documento nuevo al repositorio', textAlign: TextAlign.center, style: AppTextStyles.bodySmall),
+              Text('Selecciona un documento de tu dispositivo para subirlo al repositorio', textAlign: TextAlign.center, style: AppTextStyles.bodySmall),
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
@@ -269,25 +264,50 @@ class _RepositoryView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  onPressed: () {
-                    // Create a random mock document
-                    final random = Random();
-                    final exts = ['pdf', 'docx', 'xlsx'];
-                    final cats = DocCategory.values;
-                    
-                    final newDoc = RepoDocument(
-                      id: 'doc-${DateTime.now().millisecondsSinceEpoch}',
-                      name: 'Archivo_Subido_${random.nextInt(1000)}',
-                      extension: exts[random.nextInt(exts.length)],
-                      size: '${(random.nextDouble() * 5).toStringAsFixed(1)} MB',
-                      uploadDate: DateTime.now(),
-                      category: cats[random.nextInt(cats.length)],
-                    );
-                    
-                    bloc.add(UploadDocument(newDoc));
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    try {
+                      final result = await FilePicker.platform.pickFiles(
+                        type: FileType.custom,
+                        allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx'],
+                      );
+                      
+                      if (result != null && result.files.single.path != null) {
+                        final platformFile = result.files.single;
+                        final name = platformFile.name.split('.').first;
+                        final ext = platformFile.extension ?? 'pdf';
+                        final sizeInBytes = platformFile.size;
+                        final sizeInMB = (sizeInBytes / (1024 * 1024)).toStringAsFixed(1);
+                        
+                        DocCategory category;
+                        if (ext == 'pdf') {
+                          category = DocCategory.facturas;
+                        } else if (ext == 'docx' || ext == 'doc') {
+                          category = DocCategory.aduanas;
+                        } else if (ext == 'xlsx' || ext == 'xls') {
+                          category = DocCategory.otros;
+                        } else {
+                          category = DocCategory.otros;
+                        }
+                        
+                        final newDoc = RepoDocument(
+                          id: 'doc-${DateTime.now().millisecondsSinceEpoch}',
+                          name: name,
+                          extension: ext,
+                          size: '$sizeInMB MB',
+                          uploadDate: DateTime.now(),
+                          category: category,
+                        );
+                        
+                        bloc.add(UploadDocument(newDoc));
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      }
+                    } catch (e) {
+                      debugPrint('Error picking file: $e');
+                    }
                   },
-                  child: const Text('Simular Seleccionar Archivo', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: const Text('Seleccionar Archivo', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(height: 32),
@@ -295,6 +315,144 @@ class _RepositoryView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class DownloadProgressDialog extends StatefulWidget {
+  final RepoDocument document;
+  const DownloadProgressDialog({super.key, required this.document});
+
+  @override
+  State<DownloadProgressDialog> createState() => _DownloadProgressDialogState();
+}
+
+class _DownloadProgressDialogState extends State<DownloadProgressDialog> {
+  double _progress = 0.0;
+  bool _isCompleted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _startSimulatedDownload();
+  }
+
+  void _startSimulatedDownload() {
+    const totalSteps = 20;
+    const duration = Duration(milliseconds: 100);
+    int currentStep = 0;
+
+    Timer.periodic(duration, (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      currentStep++;
+      setState(() {
+        _progress = currentStep / totalSteps;
+      });
+
+      if (currentStep >= totalSteps) {
+        timer.cancel();
+        setState(() {
+          _isCompleted = true;
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.primaryDarkNavy.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              _isCompleted ? Icons.check_circle_rounded : Icons.downloading_rounded,
+              color: _isCompleted ? AppColors.successGreen : AppColors.primaryDarkNavy,
+              size: 40,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            _isCompleted ? '¡Descarga Completada!' : 'Descargando Archivo',
+            style: GoogleFonts.inter(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.textPrimary),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            widget.document.name,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 20),
+          if (!_isCompleted) ...[
+            LinearProgressIndicator(
+              value: _progress,
+              backgroundColor: AppColors.surfaceGray,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accentOrange),
+              minHeight: 6,
+              borderRadius: BorderRadius.circular(3),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${(_progress * 100).toInt()}%',
+              style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.accentOrange),
+            ),
+          ] else ...[
+            Text(
+              'El documento ha sido guardado exitosamente en tu dispositivo.',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.caption,
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: AppColors.border),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text('Cerrar', style: GoogleFonts.inter(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Abriendo ${widget.document.name}.${widget.document.extension}...'),
+                          backgroundColor: AppColors.successGreen,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryDarkNavy,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text('Abrir', style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

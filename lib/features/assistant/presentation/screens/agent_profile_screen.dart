@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../injection/injection.dart';
-import '../bloc/assistant_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/agent.dart';
-import 'agent_contact_screen.dart';
+
 
 class AgentProfileScreen extends StatelessWidget {
   final Agent agent;

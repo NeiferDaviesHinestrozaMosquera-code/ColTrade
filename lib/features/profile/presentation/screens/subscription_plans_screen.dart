@@ -604,7 +604,7 @@ class _SubscriptionPlansScreenState extends State<SubscriptionPlansScreen>
                     ? OutlinedButton(
                         onPressed: null,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppColors.border, width: 1.5),
+                          side: const BorderSide(color: AppColors.border, width: 1.5),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),

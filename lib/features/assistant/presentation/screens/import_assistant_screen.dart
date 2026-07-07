@@ -99,7 +99,7 @@ class _ImportAssistantScreenState extends State<ImportAssistantScreen> {
             Container(
               width: 36,
               height: 36,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.primaryDarkNavy,
                 shape: BoxShape.circle,
               ),
@@ -110,9 +110,9 @@ class _ImportAssistantScreenState extends State<ImportAssistantScreen> {
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.primaryDarkNavy,
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(16),
                     topRight: Radius.circular(16),
                     bottomRight: Radius.circular(16),
@@ -122,17 +122,17 @@ class _ImportAssistantScreenState extends State<ImportAssistantScreen> {
                   text: TextSpan(
                     style:
                         AppTextStyles.bodyRegular.copyWith(color: Colors.white),
-                    children: [
-                      const TextSpan(
+                    children: const [
+                      TextSpan(
                           text:
                               'Hola, soy tu asistente de importación. Para comenzar necesito:\n\n'),
-                      const TextSpan(
+                      TextSpan(
                           text: '• ¿Qué producto deseas importar?\n',
                           style: TextStyle(fontWeight: FontWeight.bold)),
-                      const TextSpan(
+                      TextSpan(
                           text: '• ¿Cuál es su país de origen?\n',
                           style: TextStyle(fontWeight: FontWeight.bold)),
-                      const TextSpan(
+                      TextSpan(
                           text: '• ¿Cuánto pesa aproximadamente?',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
@@ -304,11 +304,11 @@ class _ImportAssistantScreenState extends State<ImportAssistantScreen> {
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   border: Border(
                       left: BorderSide(color: AppColors.yellowAmber, width: 2)),
-                  color: const Color(0xFFFFFBEB),
-                  borderRadius: const BorderRadius.only(
+                  color: Color(0xFFFFFBEB),
+                  borderRadius: BorderRadius.only(
                     topRight: Radius.circular(8),
                     bottomRight: Radius.circular(8),
                   ),
@@ -509,10 +509,11 @@ class _ImportAssistantScreenState extends State<ImportAssistantScreen> {
                 ? 'Continuar con el Expediente >'
                 : '✅  Finalizar Importación',
             onTap: () {
-              if (_currentStep < 4)
+              if (_currentStep < 4) {
                 setState(() => _currentStep++);
-              else
+              } else {
                 context.pop();
+              }
             },
           ),
           const SizedBox(height: 8),

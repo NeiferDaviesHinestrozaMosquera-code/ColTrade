@@ -61,7 +61,7 @@ import '../../features/assistant/presentation/screens/agent_contact_screen.dart'
 final _authNotifier = sl<AuthNotifier>();
 
 final appRouter = GoRouter(
-  initialLocation: '/home',
+  initialLocation: '/login',
   refreshListenable: _authNotifier,
   redirect: (context, state) {
     final isAuthenticated = _authNotifier.isAuthenticated;
@@ -69,7 +69,7 @@ final appRouter = GoRouter(
     final isAuthRoute = authRoutes.contains(state.matchedLocation);
 
     // Unauthenticated user trying to access protected route → go to login
-    if (!isAuthenticated && !isAuthRoute) return '/home';
+    if (!isAuthenticated && !isAuthRoute) return '/login';
     // Authenticated user on an auth route → go to home
     if (isAuthenticated && isAuthRoute) return '/home';
     // No redirect needed

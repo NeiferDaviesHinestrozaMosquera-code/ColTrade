@@ -5,6 +5,8 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../bloc/security_bloc.dart';
 import '../../domain/entities/session_entity.dart';
+import '../../../../injection/injection.dart';
+import '../../../../core/services/biometric_service.dart';
 
 class SecurityScreen extends StatelessWidget {
   const SecurityScreen({super.key});
@@ -69,6 +71,41 @@ class _SecurityView extends StatelessWidget {
                       trailing: Switch(
                         value: state.twoFAEnabled,
                         onChanged: (_) => bloc.add(const Toggle2FA()),
+                        activeColor: AppColors.primaryDarkNavy,
+                      ),
+                    ),
+                    const Divider(height: 1, indent: 16, endIndent: 16),
+                    ListTile(
+                      leading: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryDarkNavy,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.fingerprint_rounded,
+                            color: Colors.white, size: 20),
+                      ),
+                      title: Text('Ingreso con Biometría (FaceID/Huella)',
+                          style: AppTextStyles.bodyRegular
+                              .copyWith(fontWeight: FontWeight.w600)),
+                      subtitle: Text('Inicia sesión de forma rápida y segura',
+                          style: AppTextStyles.caption),
+                      trailing: Switch(
+                        value: state.biometricsEnabled,
+                        onChanged: (_) async {
+                          final isAvailable = await sl<BiometricService>().isBiometricAvailable();
+                          if (!isAvailable && context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Biometría no disponible en este dispositivo'),
+                                backgroundColor: AppColors.errorRed,
+                              ),
+                            );
+                            return;
+                          }
+                          bloc.add(const ToggleBiometrics());
+                        },
                         activeColor: AppColors.primaryDarkNavy,
                       ),
                     ),

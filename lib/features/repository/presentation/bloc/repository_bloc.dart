@@ -68,9 +68,9 @@ class RepositoryBloc extends Bloc<RepositoryEvent, RepositoryState> {
       final lowerQuery = state.query.toLowerCase();
       final filtered = docs.where((doc) {
         if (state.query.isNotEmpty &&
-            !doc.name.toLowerCase().contains(lowerQuery)) return false;
+            !doc.name.toLowerCase().contains(lowerQuery)) { return false; }
         if (state.selectedCategory != null &&
-            doc.category != state.selectedCategory) return false;
+            doc.category != state.selectedCategory) { return false; }
         return true;
       }).toList();
 

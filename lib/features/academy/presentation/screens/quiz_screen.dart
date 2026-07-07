@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import 'certificate_screen.dart';
+
 
 // ─── Quiz Screen ──────────────────────────────────────────────────────────────
 class QuizScreen extends StatefulWidget {
@@ -14,7 +14,7 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  int _currentQuestion = 3;
+  final int _currentQuestion = 3;
   int? _selectedOption;
 
   final _question =
@@ -125,7 +125,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),
@@ -192,7 +192,7 @@ class QuizResultsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   // Donut score
-                  SizedBox(
+                  const SizedBox(
                     width: 120,
                     height: 120,
                     child: Stack(
@@ -200,11 +200,11 @@ class QuizResultsScreen extends StatelessWidget {
                         CircularProgressIndicator(
                           value: 0.8,
                           backgroundColor: AppColors.border,
-                          valueColor: const AlwaysStoppedAnimation<Color>(
+                          valueColor: AlwaysStoppedAnimation<Color>(
                               AppColors.primaryDarkNavy),
                           strokeWidth: 10,
                         ),
-                        const Center(
+                        Center(
                           child: Text('80%',
                               style: TextStyle(
                                   fontSize: 28,
@@ -282,7 +282,7 @@ class QuizResultsScreen extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // Topic summary
-                  SectionHeader(title: 'Resumen de temas'),
+                  const SectionHeader(title: 'Resumen de temas'),
                   const SizedBox(height: 10),
                   ...topics.map((t) {
                     final (passed, topic, subtitle) = t;
@@ -325,7 +325,7 @@ class QuizResultsScreen extends StatelessWidget {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

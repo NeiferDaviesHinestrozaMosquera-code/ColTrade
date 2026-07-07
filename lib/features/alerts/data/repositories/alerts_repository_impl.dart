@@ -1,13 +1,70 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/data/api_cache_service.dart';
 import '../../domain/entities/alert_entity.dart';
 import '../../domain/repositories/alerts_repository.dart';
 
 class AlertsRepositoryImpl implements AlertsRepository {
+  final ApiCacheService _cache = ApiCacheService();
+
   @override
   Future<Either<Failure, List<AlertEntity>>> getAlerts() async {
-    // Mock data – reemplazar por API/local DB en el futuro
-    return const Right([
+    try {
+      final alerts = await _cache.cachedRequest<List<dynamic>>(
+        key: 'alerts_list',
+        ttlSeconds: 600, // 10 minutos de caché
+        fetcher: () async {
+          // TODO: Reemplazar con llamada real a Dio cuando el endpoint esté listo
+          // Ejemplo: final response = await dio.get('/api/v1/alerts');
+          // return response.data;
+          return _getMockAlerts();
+        },
+      );
+
+      final alertEntities = alerts.map((a) => AlertEntity(
+        priority: _parsePriority(a['priority'] as String? ?? 'informativo'),
+        date: a['date'] as String? ?? '',
+        title: a['title'] as String? ?? '',
+        summary: a['summary'] as String? ?? '',
+        institution: a['institution'] as String? ?? '',
+      )).toList();
+
+      return Right(alertEntities);
+    } catch (e) {
+      // Si la caché falla, devolver datos mock directamente
+      return Right(_getDefaultAlerts());
+    }
+  }
+
+  AlertPriority _parsePriority(String priority) {
+    switch (priority.toLowerCase()) {
+      case 'alta':
+        return AlertPriority.alta;
+      case 'media':
+        return AlertPriority.media;
+      case 'baja':
+        return AlertPriority.baja;
+      case 'tlc':
+        return AlertPriority.tlc;
+      default:
+        return AlertPriority.informativo;
+    }
+  }
+
+  /// Mock data — se reemplazará por la respuesta del API
+  Future<List<Map<String, dynamic>>> _getMockAlerts() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    return _getDefaultAlerts().map((a) => {
+      'priority': a.priority.name,
+      'date': a.date,
+      'title': a.title,
+      'summary': a.summary,
+      'institution': a.institution,
+    }).toList();
+  }
+
+  List<AlertEntity> _getDefaultAlerts() {
+    return const [
       AlertEntity(
         priority: AlertPriority.alta,
         date: '14 Oct 2024',
@@ -47,6 +104,6 @@ class AlertsRepositoryImpl implements AlertsRepository {
         summary: 'El portal VUCE tendrá mantenimiento el próximo fin de semana.',
         institution: 'MinCIT',
       ),
-    ]);
+    ];
   }
 }

@@ -16,26 +16,68 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthReset>(_onReset);
   }
 
+  bool _isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  String? _validatePasswordStrength(String password) {
+    if (password.length < 8) {
+      return 'La contraseña debe tener al menos 8 caracteres.';
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      return 'La contraseña debe incluir al menos una letra mayúscula.';
+    }
+    if (!RegExp(r'[a-z]').hasMatch(password)) {
+      return 'La contraseña debe incluir al menos una letra minúscula.';
+    }
+    if (!RegExp(r'[0-9]').hasMatch(password)) {
+      return 'La contraseña debe incluir al menos un número.';
+    }
+    if (!RegExp(r'[!@#\$&*~_.-]').hasMatch(password)) {
+      return 'La contraseña debe incluir al menos un carácter especial (ej. !@#\$&*~_.-).';
+    }
+    return null;
+  }
+
   Future<void> _onLogin(
       LoginSubmitted event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
-    await Future.delayed(const Duration(milliseconds: 1200));
-    // Simulate: any non-empty email + password >= 6 chars passes
-    if (event.email.contains('@') && event.password.length >= 6) {
-      emit(const AuthSuccess());
-    } else {
-      emit(const AuthFailure('Credenciales incorrectas. Verifica tu email y contraseña.'));
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    if (!_isValidEmail(event.email)) {
+      emit(const AuthFailure('Correo electrónico inválido. Verifica el formato.'));
+      return;
     }
+    if (event.password.length < 6) {
+      emit(const AuthFailure('La contraseña debe tener al menos 6 caracteres.'));
+      return;
+    }
+    
+    emit(const AuthSuccess());
   }
 
   Future<void> _onRegister(
       RegisterSubmitted event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
-    await Future.delayed(const Duration(milliseconds: 1400));
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    if (!_isValidEmail(event.user.email)) {
+      emit(const AuthFailure('Correo electrónico inválido. Verifica el formato.'));
+      return;
+    }
+
+    final passwordError = _validatePasswordStrength(event.password);
+    if (passwordError != null) {
+      emit(AuthFailure(passwordError));
+      return;
+    }
+
     if (event.password != event.confirmPassword) {
       emit(const AuthFailure('Las contraseñas no coinciden.'));
       return;
     }
+
     // Simulate storing user with salted hashed password
     PasswordHasher.hash(event.password);
     final maskedEmail = _maskEmail(event.user.email);
@@ -45,9 +87,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onForgotPassword(
       ForgotPasswordRequested event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
-    await Future.delayed(const Duration(milliseconds: 1000));
-    if (!event.email.contains('@')) {
-      emit(const AuthFailure('Correo electrónico inválido.'));
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (!_isValidEmail(event.email)) {
+      emit(const AuthFailure('Correo electrónico inválido. Verifica el formato.'));
       return;
     }
     final maskedEmail = _maskEmail(event.email);
@@ -57,8 +99,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onOtpVerified(
       OtpVerified event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
-    await Future.delayed(const Duration(milliseconds: 800));
-    // Simulate: OTP "123456" always works in demo
+    await Future.delayed(const Duration(milliseconds: 400));
+    // Simulate: OTP "123456" or any 6-digit code works in demo
     if (event.otp == '123456' || event.otp.length == 6) {
       if (event.flowType == OtpFlowType.forgotPassword) {
         emit(const PasswordResetReady());
@@ -73,7 +115,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onNewPassword(
       NewPasswordSubmitted event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
-    await Future.delayed(const Duration(milliseconds: 900));
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    final passwordError = _validatePasswordStrength(event.password);
+    if (passwordError != null) {
+      emit(AuthFailure(passwordError));
+      return;
+    }
+
     if (event.password != event.confirmPassword) {
       emit(const AuthFailure('Las contraseñas no coinciden.'));
       return;

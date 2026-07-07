@@ -5,29 +5,21 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../data/datasources/logistics_local_datasource.dart';
-import '../../data/repositories/logistics_repository_impl.dart';
 import '../../domain/entities/port.dart';
-import '../../domain/usecases/get_ports_usecase.dart';
-import '../../domain/usecases/get_routes_usecase.dart';
 import '../bloc/logistics_bloc.dart';
 import '../widgets/port_card_widget.dart';
 import '../widgets/animated_route_widget.dart';
 import '../widgets/alternatives_panel_widget.dart';
+
+import '../../../../injection/injection.dart';
 
 class LogisticsScreen extends StatelessWidget {
   const LogisticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final datasource = LogisticsLocalDatasource();
-    final repository = LogisticsRepositoryImpl(datasource);
     return BlocProvider(
-      create: (_) => LogisticsBloc(
-        getPorts: GetPortsUseCase(repository),
-        getRoutes: GetRoutesUseCase(repository),
-        getAlternatives: GetAlternativesUseCase(repository),
-      )..add(const LoadLogisticsData()),
+      create: (_) => sl<LogisticsBloc>()..add(const LoadLogisticsData()),
       child: const _LogisticsView(),
     );
   }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
+import '../../../../core/utils/auth_notifier.dart';
+import '../../../../injection/injection.dart';
 
 class ProfileTab extends StatelessWidget {
   const ProfileTab({super.key});
@@ -118,6 +119,18 @@ class ProfileTab extends StatelessWidget {
             _profileItem(
                 Icons.play_circle_outline, 'Tutoriales', 'Videos de ayuda',
                 onTap: () => context.push('/tutorials')),
+          ]),
+          const SizedBox(height: 16),
+          _profileSection('CUENTA', [
+            ListTile(
+              onTap: () => _showLogoutDialog(context),
+              leading: const Icon(Icons.logout_rounded, color: AppColors.errorRed, size: 22),
+              title: Text('Cerrar sesión',
+                  style: AppTextStyles.bodyRegular.copyWith(
+                      fontWeight: FontWeight.w600, color: AppColors.errorRed)),
+              subtitle: Text('Cerrar sesión de forma segura',
+                  style: AppTextStyles.caption.copyWith(color: AppColors.errorRed.withValues(alpha: 0.7))),
+            ),
           ]),
           const SizedBox(height: 16),
           CTAButton(
@@ -318,6 +331,48 @@ class ProfileTab extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          backgroundColor: AppColors.background,
+          title: Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: AppColors.accentOrange),
+              const SizedBox(width: 8),
+              Text('Cerrar sesión', style: AppTextStyles.h3(context)),
+            ],
+          ),
+          content: Text(
+            '¿Estás seguro de que deseas cerrar sesión? Tendrás que volver a ingresar tus credenciales para acceder a tus datos y operaciones sensibles.',
+            style: AppTextStyles.bodyRegular,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text('Cancelar',
+                  style: AppTextStyles.bodyRegular.copyWith(fontWeight: FontWeight.w600)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                // Securely clear the session locally
+                sl<AuthNotifier>().logout();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.errorRed,
+                foregroundColor: Colors.white,
+                elevation: 0,
+              ),
+              child: const Text('Cerrar sesión'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

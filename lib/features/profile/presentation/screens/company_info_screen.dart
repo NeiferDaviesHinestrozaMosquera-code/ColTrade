@@ -396,8 +396,9 @@ class _CompanyInfoScreenState extends State<CompanyInfoScreen> {
                           size: 18, color: AppColors.textLabel),
                     ),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty)
+                      if (v == null || v.trim().isEmpty) {
                         return 'Campo requerido';
+                      }
                       if (!v.contains('@')) return 'Correo inválido';
                       return null;
                     },

@@ -56,9 +56,12 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
     }
   }
 
-  void _onToggleDocument(ToggleDocument event, Emitter<ChecklistState> emit) {
+  Future<void> _onToggleDocument(ToggleDocument event, Emitter<ChecklistState> emit) async {
     if (state is ChecklistLoaded) {
       final loaded = state as ChecklistLoaded;
+      final previousDocs = List<DocItemEntity>.from(loaded.docs); // Backup
+
+      // 1. Optimistic Update (Actualizar UI inmediatamente)
       final updatedDocs = List<DocItemEntity>.from(loaded.docs);
       final doc = updatedDocs[event.index];
       updatedDocs[event.index] = DocItemEntity(
@@ -68,7 +71,24 @@ class ChecklistBloc extends Bloc<ChecklistEvent, ChecklistState> {
         needsUpload: doc.needsUpload,
         hasError: doc.hasError,
       );
+      
       emit(loaded.copyWith(docs: updatedDocs));
+
+      // 2. Simular petición de red al servidor
+      try {
+        await Future.delayed(const Duration(milliseconds: 800));
+        
+        // Simular un fallo aleatorio del 20% para probar el rollback
+        if (DateTime.now().millisecond % 5 == 0) {
+          throw Exception('Error de conexión con el servidor (Simulado)');
+        }
+        
+      } catch (e) {
+        // 3. Rollback en caso de fallo
+        emit(ChecklistError(message: e.toString().replaceAll('Exception: ', '')));
+        // Restaurar el estado visual previo
+        emit(loaded.copyWith(docs: previousDocs));
+      }
     }
   }
 }

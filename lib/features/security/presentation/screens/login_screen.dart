@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
 import '../../../../injection/injection.dart';
 import '../../../../core/utils/auth_notifier.dart';
+import '../../../../core/services/biometric_service.dart';
 import '../bloc/auth/auth_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -228,6 +229,35 @@ class _LoginBody extends StatelessWidget {
                             ),
                           )
                         : null,
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // ── Biometric Login ───────────────────────────────────────
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final biometricService = sl<BiometricService>();
+                      final isAvailable = await biometricService.isBiometricAvailable();
+                      if (isAvailable) {
+                        final authenticated = await biometricService.authenticate();
+                        if (authenticated && context.mounted) {
+                          sl<AuthNotifier>().login();
+                          context.go('/home');
+                        }
+                      } else {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Biometría no disponible en este dispositivo')),
+                          );
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.fingerprint, color: AppColors.primaryDarkNavy),
+                    label: Text('Ingresar con Biometría', style: AppTextStyles.bodyRegular.copyWith(color: AppColors.primaryDarkNavy)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: const BorderSide(color: AppColors.border),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
                   ),
                   const SizedBox(height: 24),
 

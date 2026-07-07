@@ -302,7 +302,7 @@ class _AlternativeCardState extends State<_AlternativeCard> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Icon(Icons.attach_money_rounded,
+                  const Icon(Icons.attach_money_rounded,
                       size: 14, color: AppColors.textLabel),
                   const SizedBox(width: 4),
                   Expanded(
@@ -315,7 +315,7 @@ class _AlternativeCardState extends State<_AlternativeCard> {
                   AnimatedRotation(
                     turns: _expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 250),
-                    child: Icon(Icons.keyboard_arrow_down_rounded,
+                    child: const Icon(Icons.keyboard_arrow_down_rounded,
                         color: AppColors.textLabel, size: 20),
                   ),
                 ],

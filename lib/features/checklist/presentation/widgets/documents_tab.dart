@@ -35,9 +35,9 @@ class DocumentsTab extends StatelessWidget {
         const SizedBox(height: 20),
         Text('ENTIDADES ALIADAS', style: AppTextStyles.labelUppercase),
         const SizedBox(height: 8),
-        Wrap(
+        const Wrap(
           spacing: 8,
-          children: const [
+          children: [
             EntityBadge('DIAN', AppColors.textSecondary),
             EntityBadge('ICA', AppColors.successGreen),
             EntityBadge('INVIMA', AppColors.infoBlue),

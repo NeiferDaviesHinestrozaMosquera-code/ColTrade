@@ -15,6 +15,10 @@ class Toggle2FA extends SecurityEvent {
   const Toggle2FA();
 }
 
+class ToggleBiometrics extends SecurityEvent {
+  const ToggleBiometrics();
+}
+
 class CloseSession extends SecurityEvent {
   final String deviceId;
   const CloseSession(this.deviceId);

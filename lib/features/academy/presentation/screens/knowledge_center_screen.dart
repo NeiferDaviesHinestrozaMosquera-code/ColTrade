@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import 'lesson_player_screen.dart';
+
 
 class KnowledgeCenterScreen extends StatefulWidget {
   const KnowledgeCenterScreen({super.key});
@@ -13,9 +13,9 @@ class KnowledgeCenterScreen extends StatefulWidget {
 }
 
 class _KnowledgeCenterScreenState extends State<KnowledgeCenterScreen> {
-  int _selectedTab = 0;
 
-  final _courses = [
+
+  static const _courses = [
     _Course('Logística Internacional Avanzada', 10, 8, 4.8, '12h 30m', 40),
     _Course('Clasificación Arancelaria NANDINA', 8, 0, 4.9, '8h 15m', 0),
     _Course('TLCs de Colombia: Oportunidades', 12, 0, 4.7, '15h 00m', 0),
@@ -60,13 +60,13 @@ class _KnowledgeCenterScreenState extends State<KnowledgeCenterScreen> {
                   const SizedBox(height: 24),
 
                   // Courses for you
-                  SectionHeader(title: 'Cursos para ti', action: 'Ver todos'),
+                  const SectionHeader(title: 'Cursos para ti', action: 'Ver todos'),
                   const SizedBox(height: 12),
-                  ..._courses.skip(1).map((c) => _buildCourseCard(c)).toList(),
+                  ..._courses.skip(1).map((c) => _buildCourseCard(c)),
                   const SizedBox(height: 24),
 
                   // Live webinar
-                  SectionHeader(title: 'Webinars en vivo', action: 'Ver todos'),
+                  const SectionHeader(title: 'Webinars en vivo', action: 'Ver todos'),
                   const SizedBox(height: 12),
                   _buildWebinarCard(),
                 ],
@@ -185,9 +185,9 @@ class _KnowledgeCenterScreenState extends State<KnowledgeCenterScreen> {
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primaryDarkNavy,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(14),
                 bottomLeft: Radius.circular(14),
               ),
@@ -340,7 +340,7 @@ class _Course {
   final String duration;
   final int progress;
 
-  _Course(this.title, this.totalModules, this.completedModules, this.rating,
+  const _Course(this.title, this.totalModules, this.completedModules, this.rating,
       this.duration, this.progress);
 }
 

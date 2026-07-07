@@ -353,7 +353,7 @@ class TimelineStep extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          StatusBadge(status: BadgeStatus.enProceso),
+          const StatusBadge(status: BadgeStatus.enProceso),
           const SizedBox(height: 6),
           Text(title, style: AppTextStyles.cardTitle.copyWith(color: Colors.white)),
           if (subtitle != null) ...[

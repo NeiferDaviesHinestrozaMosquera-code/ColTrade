@@ -4,25 +4,19 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
-import '../../data/datasources/history_local_datasource.dart';
-import '../../data/repositories/history_repository_impl.dart';
 import '../../domain/entities/history_item.dart';
-import '../../domain/usecases/get_history_usecase.dart';
 import '../bloc/history_bloc.dart';
 import '../widgets/history_item_card.dart';
+
+import '../../../../injection/injection.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final datasource = HistoryLocalDatasource();
-    final repository = HistoryRepositoryImpl(datasource);
-
     return BlocProvider(
-      create: (_) => HistoryBloc(
-        getHistory: GetHistoryUseCase(repository),
-      )..add(const LoadHistory()),
+      create: (_) => sl<HistoryBloc>()..add(const LoadHistory()),
       child: const _HistoryView(),
     );
   }
@@ -168,7 +162,7 @@ class _HistoryView extends StatelessWidget {
             labelStyle: AppTextStyles.caption.copyWith(color: AppColors.errorRed),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
-                side: BorderSide(color: AppColors.border)),
+                side: const BorderSide(color: AppColors.border)),
           ),
           const SizedBox(width: 8),
           if (state.selectedDateFilter != DateFilter.all) ...[
@@ -198,7 +192,7 @@ class _HistoryView extends StatelessWidget {
                       .add(ToggleCategoryFilter(cat)),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: AppColors.border)),
+                      side: const BorderSide(color: AppColors.border)),
                 ),
               )),
           ...state.selectedImportances.map((imp) => Padding(
@@ -213,7 +207,7 @@ class _HistoryView extends StatelessWidget {
                       .add(ToggleImportanceFilter(imp)),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(color: AppColors.border)),
+                      side: const BorderSide(color: AppColors.border)),
                 ),
               )),
         ],
@@ -403,7 +397,7 @@ class _HistoryView extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: Text('Limpiar Todo', style: TextStyle(color: AppColors.textSecondary)),
+                          child: const Text('Limpiar Todo', style: TextStyle(color: AppColors.textSecondary)),
                         ),
                       ),
                       const SizedBox(width: 12),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/common_widgets.dart';
+import '../../../../core/presentation/widgets/shimmer_loading.dart';
 import '../bloc/assistant_bloc.dart';
 import '../bloc/assistant_event.dart';
 import '../bloc/assistant_state.dart';
@@ -213,29 +214,19 @@ class _NandinaClassifierScreenState extends State<NandinaClassifierScreen>
   }
 
   Widget _buildLoading() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceGray,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        children: [
-          RotationTransition(
-            turns: _loadingAnim,
-            child: const Icon(Icons.smart_toy_outlined,
-                size: 40, color: AppColors.textSecondary),
-          ),
-          const SizedBox(height: 12),
-          Text('Analizando componentes...',
-              style: AppTextStyles.bodyRegular
-                  .copyWith(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 4),
-          Text('Consultando base de datos DIAN...',
-              style: AppTextStyles.caption),
-        ],
-      ),
+    return const Column(
+      children: [
+        ShimmerLoadingCard(height: 120, borderRadius: 14, margin: EdgeInsets.only(bottom: 16)),
+        Row(
+          children: [
+            Expanded(child: ShimmerLoadingCard(height: 80, margin: EdgeInsets.zero)),
+            SizedBox(width: 16),
+            Expanded(child: ShimmerLoadingCard(height: 80, margin: EdgeInsets.zero)),
+          ],
+        ),
+        SizedBox(height: 16),
+        ShimmerLoadingCard(height: 50, margin: EdgeInsets.zero),
+      ],
     );
   }
 

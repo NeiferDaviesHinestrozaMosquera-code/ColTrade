@@ -156,7 +156,7 @@ class HistoryItemCard extends StatelessWidget {
             // Footer: Date
             Row(
               children: [
-                Icon(Icons.access_time_rounded,
+                const Icon(Icons.access_time_rounded,
                     size: 14, color: AppColors.textLabel),
                 const SizedBox(width: 4),
                 Text(

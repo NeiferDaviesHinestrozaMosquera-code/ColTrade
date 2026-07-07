@@ -1,14 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/session_entity.dart';
+import '../../../../core/services/biometric_service.dart';
+import '../../../../injection/injection.dart';
 
 part 'security_event.dart';
 part 'security_state.dart';
 
 class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
-  SecurityBloc() : super(SecurityState(sessions: _initialSessions)) {
+  SecurityBloc() : super(const SecurityState()) {
     on<LoadSecurity>(_onLoad);
     on<Toggle2FA>(_onToggle2FA);
+    on<ToggleBiometrics>(_onToggleBiometrics);
     on<CloseSession>(_onCloseSession);
     on<CloseAllSessions>(_onCloseAllSessions);
   }
@@ -33,11 +36,21 @@ class SecurityBloc extends Bloc<SecurityEvent, SecurityState> {
   ];
 
   void _onLoad(LoadSecurity event, Emitter<SecurityState> emit) {
-    emit(SecurityState(sessions: List.from(_initialSessions)));
+    emit(state.copyWith(sessions: List.from(_initialSessions)));
   }
 
   void _onToggle2FA(Toggle2FA event, Emitter<SecurityState> emit) {
     emit(state.copyWith(twoFAEnabled: !state.twoFAEnabled));
+  }
+
+  Future<void> _onToggleBiometrics(ToggleBiometrics event, Emitter<SecurityState> emit) async {
+    final isAvailable = await sl<BiometricService>().isBiometricAvailable();
+    if (isAvailable) {
+      emit(state.copyWith(biometricsEnabled: !state.biometricsEnabled));
+    } else {
+      // Emit state as-is or trigger side effects. In real apps, we would also emit an error
+      // message, but since local_auth is checked, keeping it disabled if not available is safe.
+    }
   }
 
   void _onCloseSession(CloseSession event, Emitter<SecurityState> emit) {

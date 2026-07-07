@@ -61,7 +61,7 @@ class DashboardTab extends StatelessWidget {
                     style: AppTextStyles.bodySmall),
                 const SizedBox(height: 32),
 
-                SectionHeader(title: 'Cargas Activas', action: 'VER TODO'),
+                const SectionHeader(title: 'Cargas Activas', action: 'VER TODO'),
                 const SizedBox(height: 12),
                 _buildShipmentCard(
                   context: context,

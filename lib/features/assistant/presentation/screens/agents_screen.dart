@@ -15,9 +15,9 @@ class AgentsScreen extends StatefulWidget {
 class _AgentsScreenState extends State<AgentsScreen> {
   String _activeFilter = 'Ubicación';
 
-  final _filters = ['Ubicación', 'Especialidad', 'Rating'];
+  static const _filters = ['Ubicación', 'Especialidad', 'Rating'];
 
-  final _agents = [
+  static const _agents = [
     Agent(
       initials: 'JP',
       name: 'Juan Pérez',
@@ -25,7 +25,7 @@ class _AgentsScreenState extends State<AgentsScreen> {
       experience: '12 años',
       city: 'Bogotá, CO',
       rating: 4.9,
-      specialties: const ['Importación', 'DIAN', 'Agrícola'],
+      specialties: ['Importación', 'DIAN', 'Agrícola'],
       verified: true,
       bio:
           'Juan es un experto en importaciones y normativas DIAN enfocado en el sector agrícola.',
@@ -37,7 +37,7 @@ class _AgentsScreenState extends State<AgentsScreen> {
       experience: '8 años',
       city: 'Medellín, CO',
       rating: 4.7,
-      specialties: const ['Exportación', 'TLC', 'Textiles'],
+      specialties: ['Exportación', 'TLC', 'Textiles'],
       verified: true,
       bio:
           'María lidera operaciones de exportación bajo TLCs con un foco especializado en el sector textil de Antioquia.',
@@ -49,7 +49,7 @@ class _AgentsScreenState extends State<AgentsScreen> {
       experience: '15 años',
       city: 'Cartagena, CO',
       rating: 4.8,
-      specialties: const ['Logística', 'Puertos', 'Industriales'],
+      specialties: ['Logística', 'Puertos', 'Industriales'],
       verified: false,
     ),
     Agent(
@@ -59,7 +59,7 @@ class _AgentsScreenState extends State<AgentsScreen> {
       experience: '6 años',
       city: 'Cali, CO',
       rating: 4.5,
-      specialties: const ['Importación', 'Retail', 'INVIMA'],
+      specialties: ['Importación', 'Retail', 'INVIMA'],
       verified: true,
     ),
   ];
@@ -196,7 +196,7 @@ class _AgentsScreenState extends State<AgentsScreen> {
                   Container(
                     width: 56,
                     height: 56,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.primaryDarkNavy,
                       shape: BoxShape.circle,
                     ),

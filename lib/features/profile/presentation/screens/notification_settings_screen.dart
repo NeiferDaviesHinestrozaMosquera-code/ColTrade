@@ -241,7 +241,7 @@ class _NotificationsSettingsView extends StatelessWidget {
             ),
           ),
           const Divider(height: 1, color: AppColors.border),
-          _ChannelStatusRow(
+          const _ChannelStatusRow(
             icon: Icons.email_outlined,
             iconColor: AppColors.colombiaBlue,
             label: 'Correo Electrónico',
@@ -249,7 +249,7 @@ class _NotificationsSettingsView extends StatelessWidget {
             statusColor: AppColors.successGreen,
           ),
           const Divider(height: 1, indent: 52, color: AppColors.border),
-          _ChannelStatusRow(
+          const _ChannelStatusRow(
             icon: Icons.notifications_active_outlined,
             iconColor: AppColors.accentOrange,
             label: 'Push (App Móvil)',

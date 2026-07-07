@@ -38,3 +38,12 @@ class ChecklistLoaded extends ChecklistState {
   @override
   List<Object> get props => [docs, selectedTab];
 }
+
+class ChecklistError extends ChecklistState {
+  final String message;
+
+  const ChecklistError({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
